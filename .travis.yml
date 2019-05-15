@@ -1,10 +1,12 @@
 language: node_js
+dist: trusty
 node_js:
   - "stable"
 cache:
   directories:
   - node_modules
 script:
+  - sonar-scanner
   - npm test
   - npm run build
 deploy:
@@ -22,3 +24,10 @@ after_failure:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
+notifications:
+  email: false
+addons:
+  sonarcloud:
+    organization: "mgaonach-github"
+    projectKey: "mgaonach_FILA1-VideoChat-P2P"
+    token: $SONAR_TOKEN
