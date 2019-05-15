@@ -2,6 +2,7 @@
   "name": "videochat",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://mgaonach.github.io/FILA1-VideoChat-P2P/",
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
