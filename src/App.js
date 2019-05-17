@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import adapter from "webrtc-adapter";
+import "webrtc-adapter";
 
 const constraints = {
   video: true
@@ -16,9 +16,20 @@ class App extends React.Component {
 
   createVideoRef(constraints) {
     let ref = React.createRef();
-    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-      this.state.videoRef.current.srcObject = stream;
-    });
+    if (navigator === undefined || navigator.mediaDevices === undefined) {
+      if (process.env.NODE_ENV === "test") {
+        console.info("navigator.mediaDevices is not implemented in test env");
+      } else {
+        console.error("navigator.mediaDevices is not implemented");
+        alert(
+          "Your browser does not support this website. Try with an other one."
+        );
+      }
+    } else {
+      navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+        ref.current.srcObject = stream;
+      });
+    }
     return ref;
   }
 
