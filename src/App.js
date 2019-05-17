@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import adapter from "webrtc-adapter";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.initVideo();
+  }
+
+  initVideo() {
+    let video = (
+      <video
+        ref={video => {
+          this.video = video;
+        }}
+        autoPlay
+        muted
+      />
+    );
+    this.state = {
+      video: video
+    };
+
+    navigator.mediaDevices
+      .getUserMedia({
+        video: true
+      })
+      .then(stream => {
+        this.video.srcObject = stream;
+      });
+  }
+
+  render() {
+    return this.state.video;
+  }
 }
 
 export default App;
