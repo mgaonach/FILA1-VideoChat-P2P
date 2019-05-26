@@ -3,6 +3,9 @@ import "./App.css";
 import "webrtc-adapter";
 import VideoFromStream from "./VideoFromStream";
 import SwitchBtn from "./SwitchBtn";
+import {Container} from 'react-bootstrap';
+import {Row} from 'react-bootstrap';
+import {Col} from 'react-bootstrap';
 
 class App extends React.Component {
   constructor(props) {
@@ -14,16 +17,25 @@ class App extends React.Component {
       distPeer: null
     };
     this.videoOn();
+    this.audioOn();
   }
 
   get constraints() {
     return {
-      video: true
+      video: true,
+      audio:true
     };
   }
 
   addVideoTracks(src, dest) {
     src.getVideoTracks().forEach(track => {
+      dest.addTrack(track);
+    });
+    return dest;
+  }
+
+  addAudioTracks(src, dest) {
+    src.getAudioTracks().forEach(track => {
       dest.addTrack(track);
     });
     return dest;
@@ -43,6 +55,29 @@ class App extends React.Component {
         });
       });
     }
+  }
+
+  audioOn() {
+    if (navigator === undefined || navigator.mediaDevices === undefined) {
+      if (process.env.NODE_ENV === "test") {
+        console.info("navigator.mediaDevices is not implemented in test env");
+      } else {
+        console.error("navigator.mediaDevices is not implemented");
+      }
+    } else {
+      navigator.mediaDevices.getUserMedia(this.constraints).then(stream => {
+        this.setState({
+          localStream: this.addAudioTracks(stream, this.state.localStream)
+        });
+        
+      });
+    }
+  }
+
+  audioOff() {
+    this.state.localStream.getAudioTracks().forEach(track => {
+      track.stop();
+    });
   }
 
   videoOff() {
@@ -101,23 +136,43 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <VideoFromStream stream={this.state.localStream} />
-          <VideoFromStream stream={this.state.distStream} />
-        </div>
-        <SwitchBtn
-          name="p2p"
-          value={false}
-          turnOn={this.connectP2P.bind(this)}
-          turnOff={this.disconectP2P.bind(this)}
-        />
-        <SwitchBtn
-          name="video"
-          turnOn={this.videoOn.bind(this)}
-          turnOff={this.videoOff.bind(this)}
-        />
-      </div>
+      <Container>
+        <Row className="justify-content-md-center">
+          <Col xs md="5">
+            <VideoFromStream stream={this.state.localStream} />
+          </Col>
+          <Col md="2"></Col>
+          <Col xs md="5">
+            <VideoFromStream stream={this.state.distStream} />
+          </Col>
+        </Row>  
+
+        
+
+
+
+        <Row className="justify-content-md-center">
+          <SwitchBtn
+            name="p2p"
+            value={false}
+            turnOn={this.connectP2P.bind(this)}
+            turnOff={this.disconectP2P.bind(this)}
+            img={require("./img/call.png")}
+          />
+          <SwitchBtn
+            name="video"
+            turnOn={this.videoOn.bind(this)}
+            turnOff={this.videoOff.bind(this)}
+            img={require("./img/webcam.png")}
+          />
+          <SwitchBtn
+            name="audio"
+            turnOn={this.audioOn.bind(this)}
+            turnOff={this.audioOff.bind(this)}
+            img={require("./img/micro.png")}
+          />
+          </Row>
+      </Container>
     );
   }
 }
