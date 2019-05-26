@@ -14,16 +14,25 @@ class App extends React.Component {
       distPeer: null
     };
     this.videoOn();
+    this.audioOn();
   }
 
   get constraints() {
     return {
-      video: true
+      video: { width: 520, height: 520 },
+      audio:true
     };
   }
 
   addVideoTracks(src, dest) {
     src.getVideoTracks().forEach(track => {
+      dest.addTrack(track);
+    });
+    return dest;
+  }
+
+  addAudioTracks(src, dest) {
+    src.getAudioTracks().forEach(track => {
       dest.addTrack(track);
     });
     return dest;
@@ -43,6 +52,29 @@ class App extends React.Component {
         });
       });
     }
+  }
+
+  audioOn() {
+    if (navigator === undefined || navigator.mediaDevices === undefined) {
+      if (process.env.NODE_ENV === "test") {
+        console.info("navigator.mediaDevices is not implemented in test env");
+      } else {
+        console.error("navigator.mediaDevices is not implemented");
+      }
+    } else {
+      navigator.mediaDevices.getUserMedia(this.constraints).then(stream => {
+        this.setState({
+          localStream: this.addAudioTracks(stream, this.state.localStream)
+        });
+        
+      });
+    }
+  }
+
+  audioOff() {
+    this.state.localStream.getAudioTracks().forEach(track => {
+      track.stop();
+    });
   }
 
   videoOff() {
@@ -117,7 +149,13 @@ class App extends React.Component {
           turnOn={this.videoOn.bind(this)}
           turnOff={this.videoOff.bind(this)}
         />
+        <SwitchBtn
+          name="audio"
+          turnOn={this.audioOn.bind(this)}
+          turnOff={this.audioOff.bind(this)}
+        />
       </div>
+      
     );
   }
 }
