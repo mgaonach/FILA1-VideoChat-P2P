@@ -3,6 +3,9 @@ import "./App.css";
 import "webrtc-adapter";
 import VideoFromStream from "./VideoFromStream";
 import SwitchBtn from "./SwitchBtn";
+import {Container} from 'react-bootstrap';
+import {Row} from 'react-bootstrap';
+import {Col} from 'react-bootstrap';
 
 class App extends React.Component {
   constructor(props) {
@@ -19,7 +22,7 @@ class App extends React.Component {
 
   get constraints() {
     return {
-      video: { width: 520, height: 520 },
+      video: true,
       audio:true
     };
   }
@@ -133,29 +136,43 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <VideoFromStream stream={this.state.localStream} />
-          <VideoFromStream stream={this.state.distStream} />
-        </div>
-        <SwitchBtn
-          name="p2p"
-          value={false}
-          turnOn={this.connectP2P.bind(this)}
-          turnOff={this.disconectP2P.bind(this)}
-        />
-        <SwitchBtn
-          name="video"
-          turnOn={this.videoOn.bind(this)}
-          turnOff={this.videoOff.bind(this)}
-        />
-        <SwitchBtn
-          name="audio"
-          turnOn={this.audioOn.bind(this)}
-          turnOff={this.audioOff.bind(this)}
-        />
-      </div>
-      
+      <Container>
+        <Row className="justify-content-md-center">
+          <Col xs md="5">
+            <VideoFromStream stream={this.state.localStream} />
+          </Col>
+          <Col md="2"></Col>
+          <Col xs md="5">
+            <VideoFromStream stream={this.state.distStream} />
+          </Col>
+        </Row>  
+
+        
+
+
+
+        <Row className="justify-content-md-center">
+          <SwitchBtn
+            name="p2p"
+            value={false}
+            turnOn={this.connectP2P.bind(this)}
+            turnOff={this.disconectP2P.bind(this)}
+            img={require("./img/call.png")}
+          />
+          <SwitchBtn
+            name="video"
+            turnOn={this.videoOn.bind(this)}
+            turnOff={this.videoOff.bind(this)}
+            img={require("./img/webcam.png")}
+          />
+          <SwitchBtn
+            name="audio"
+            turnOn={this.audioOn.bind(this)}
+            turnOff={this.audioOff.bind(this)}
+            img={require("./img/micro.png")}
+          />
+          </Row>
+      </Container>
     );
   }
 }
