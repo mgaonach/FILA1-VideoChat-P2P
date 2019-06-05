@@ -75,7 +75,9 @@ class App extends React.Component {
   }
 
   audioOff() {
+    console.log(this.state.localStream.getAudioTracks());
     this.state.localStream.getAudioTracks().forEach(track => {
+      alert(track);
       track.stop();
     });
   }
@@ -152,25 +154,28 @@ class App extends React.Component {
 
 
         <Row className="justify-content-md-center">
-          <SwitchBtn
-            name="p2p"
-            value={false}
-            turnOn={this.connectP2P.bind(this)}
-            turnOff={this.disconectP2P.bind(this)}
-            img={require("./img/call.png")}
-          />
-          <SwitchBtn
-            name="video"
-            turnOn={this.videoOn.bind(this)}
-            turnOff={this.videoOff.bind(this)}
-            img={require("./img/webcam.png")}
-          />
-          <SwitchBtn
-            name="audio"
-            turnOn={this.audioOn.bind(this)}
-            turnOff={this.audioOff.bind(this)}
-            img={require("./img/micro.png")}
-          />
+        <SwitchBtn
+                  name="p2p"
+                  value={false}
+                  turnOn={this.connectP2P.bind(this)}
+                  turnOff={this.disconectP2P.bind(this)}
+                  imgOn={require("./img/callon.png")}
+                  imgOff={require("./img/calloff.png")}
+                />
+                <SwitchBtn
+                  name="video"
+                  turnOn={this.videoOn.bind(this)}
+                  turnOff={this.videoOff.bind(this)}
+                  imgOn={require("./img/webcamoff.png")}
+                  imgOff={require("./img/webcamon.png")}
+                />
+                <SwitchBtn
+                  name="audio"
+                  turnOn={this.audioOn.bind(this)}
+                  turnOff={this.audioOff.bind(this)}
+                  imgOn={require("./img/microoff.png")}
+                  imgOff={require("./img/microoff.png")}
+                />
           </Row>
       </Container>
     );
