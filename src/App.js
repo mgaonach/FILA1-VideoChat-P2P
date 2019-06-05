@@ -3,216 +3,149 @@ import "./App.css";
 import "webrtc-adapter";
 import VideoFromStream from "./VideoFromStream";
 import SwitchBtn from "./SwitchBtn";
-import {Container} from 'react-bootstrap';
-import {Row} from 'react-bootstrap';
-import {Col} from 'react-bootstrap';
+import 'react-bootstrap';
+import SimplePeer from 'simple-peer';
+
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      localStream: new MediaStream(),
-      distStream: new MediaStream(),
-      localPeer: null,
-      distPeer: null,
-      messages: ""
-    };
-    this.videoOn();
-    this.audioOn();
-  }
-
-  get constraints() {
-    return {
-      video: true,
-      audio:true
-    };
-  }
-
-  addVideoTracks(src, dest) {
-    src.getVideoTracks().forEach(track => {
-      dest.addTrack(track);
-    });
-    return dest;
-  }
-
-  addAudioTracks(src, dest) {
-    src.getAudioTracks().forEach(track => {
-      dest.addTrack(track);
-    });
-    return dest;
-  }
-
-  videoOn() {
-    if (navigator === undefined || navigator.mediaDevices === undefined) {
-      if (process.env.NODE_ENV === "test") {
-        console.info("navigator.mediaDevices is not implemented in test env");
-      } else {
-        console.error("navigator.mediaDevices is not implemented");
-      }
-    } else {
-      navigator.mediaDevices.getUserMedia(this.constraints).then(stream => {
-        this.setState({
-          localStream: this.addVideoTracks(stream, this.state.localStream)
-        });
-      });
-    }
-  }
-
-  audioOn() {
-    if (navigator === undefined || navigator.mediaDevices === undefined) {
-      if (process.env.NODE_ENV === "test") {
-        console.info("navigator.mediaDevices is not implemented in test env");
-      } else {
-        console.error("navigator.mediaDevices is not implemented");
-      }
-    } else {
-      navigator.mediaDevices.getUserMedia(this.constraints).then(stream => {
-        this.setState({
-          localStream: this.addAudioTracks(stream, this.state.localStream)
-        });
+    constructor(props) {
+        super(props);
+        this.state = {
+            peer:null,
+            stream:null
+        };
         
-      });
+         
     }
-  }
 
-  audioOff() {
-    this.state.localStream.getAudioTracks().forEach(track => {
-      track.stop();
-    });
-  }
+    bindEvents(p){
+        this.state.peer.on('error', function(err){
+            console.log('error',err)
+        })
 
-  videoOff() {
-    this.state.localStream.getVideoTracks().forEach(track => {
-      track.stop();
-    });
-  }
-
-  connectP2P() {
-    let localPeer = new RTCPeerConnection();
-    let distPeer = new RTCPeerConnection();
-
-    this.setState({
-      localPeer: localPeer,
-      distPeer: distPeer
-    });
-
-    localPeer.onicecandidate = e => {
-      distPeer.addIceCandidate(e.candidate);
-    };
-
-    distPeer.onicecandidate = e => {
-      localPeer.addIceCandidate(e.candidate);
-    };
-
-    distPeer.onaddstream = e => {
-      this.setState({
-        distStream: this.addVideoTracks(e.stream, this.state.distStream)
-      });
-    };
-
-    localPeer.addStream(this.state.localStream);
-
-    localPeer
-      .createOffer({
-        offerToReceiveVideo: 1
-      })
-      .then(desc => {
-        localPeer.setLocalDescription(desc);
-        distPeer.setRemoteDescription(desc);
-        distPeer.createAnswer().then(desc => {
-          localPeer.setRemoteDescription(desc);
-          distPeer.setLocalDescription(desc);
+        this.state.peer.on('signal', function(data){
+            document.querySelector('#offer').value= JSON.stringify(data);
         });
-      });
-  }
 
-  disconectP2P() {
-    this.state.localPeer.close();
-    this.state.distPeer.close();
-    this.setState({
-      localPeer: null,
-      distPeer: null
-    });
-  }
+        this.state.peer.on('stream', function(stream){
+            let video = document.querySelector('#receiver-video');
+            video.srcObject = stream;
+            video.play();
+        })
+    }  
 
-  sendMessage(){
-    const textarea = document.getElementById("messageInput");
-    
-    const value = textarea.value;
-    if (value === '') {
-      console.log('Not sending empty message!');
-      return;
+
+    initLocalMedia(){
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.mediaDevices.getUserMedia;
+        navigator.getUserMedia({
+            video:true,
+            audio:true
+        },
+        function(stream){
+             let p = new SimplePeer({
+                initiator:true,
+                stream : stream,
+                trickle:false
+            })
+            this.state.stream=stream;
+            this.state.peer=p;
+            this.bindEvents(this.state.peer);
+            let emitterVideo = document.querySelector('#emitter-video');
+            emitterVideo.srcObject = stream;
+            emitterVideo.play();
+        }.bind(this),
+        function () {
+        })
     }
-    console.log('Sending remote message: ', value);
-    //channel.send(value);
-    //this.state.messages.push(value);
 
+    initConnection(event){
+        event.preventDefault();
+        console.log(document.getElementById('form').value)
+        if(this.state.peer==null){
+            this.state.peer= new SimplePeer({
+                initiator:false,
+                trickle:false
+            });
+            this.bindEvents(this.state.peer);
+        }
+            
+        this.state.peer.signal(JSON.parse(document.getElementById('form').value));
     
-    this.state.messages+=  value + "\n" ;
-    textarea.value = '';
+    }
 
-    this.printMessage();
-  }
+    muteUnmute(){
+        if(this.state.stream!=null)
+        this.state.stream.getAudioTracks()[0].enabled=!(this.state.stream.getAudioTracks()[0].enabled);
+    }
+    
+    hideVideo() {
+        if(this.state.stream!=null)
+        this.state.stream.getVideoTracks()[0].enabled = !(this.state.stream.getVideoTracks()[0].enabled);
+    }
 
-  receiveMessage(){
-
-  }
-  
-  printMessage(){
-    console.log("send:"+this.state.messages)
-    const messageBox = document.getElementById("messageBox");
-    messageBox.value=this.state.messages;
-  }
-
-  render() {
-    return (
-      <Container>
-        <Row className="justify-content-md-center">
-          <Col xs md="5">
-            <VideoFromStream stream={this.state.localStream} />
-          </Col>
-          <Col md="2"></Col>
-          <Col xs md="5">
-            <VideoFromStream stream={this.state.distStream} />
-          </Col>
-        </Row>  
-
-        <Row className="justify-content-md-center">
-          <SwitchBtn
-            name="p2p"
-            value={false}
-            turnOn={this.connectP2P.bind(this)}
-            turnOff={this.disconectP2P.bind(this)}
-            img={require("./img/call.png")}
-          />
-          <SwitchBtn
-            name="video"
-            turnOn={this.videoOn.bind(this)}
-            turnOff={this.videoOff.bind(this)}
-            img={require("./img/webcam.png")}
-          />
-          <SwitchBtn
-            name="audio"
-            turnOn={this.audioOn.bind(this)}
-            turnOff={this.audioOff.bind(this)}
-            img={require("./img/micro.png")}
-          />
-        </Row>
-
-        <Row className="justify-content-md-center">
-          <label> Messages 
-            <textarea  id="messageInput"  />
-          </label>
-          <input type="submit" value="Send" onClick={this.sendMessage.bind(this)}/>
-        </Row>
-        <Row className="justify-content-md-center">
-          <div >
-            <textarea  id="messageBox"  disabled />
-          </div>
-        </Row>
-      </Container>
-    );
-  }
+    render() {
+        return (
+            <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <video id="emitter-video"></video>
+                    </div>
+                    <div className="col">
+                        <video id="receiver-video"></video>
+                    </div>
+                </div>
+                <div className="row justify-content-center">
+                    <SwitchBtn
+                        name="p2p"
+                        value={false}
+                        turnOn={this.hideVideo.bind(this)}
+                        turnOff={this.hideVideo.bind(this)}
+                        img={require("./img/call.png")}
+                    />
+                    <SwitchBtn
+                        name="video"
+                        turnOn={this.hideVideo.bind(this)}
+                        turnOff={this.hideVideo.bind(this)}
+                        img={require("./img/webcam.png")}
+                    />
+                    <SwitchBtn
+                        name="audio"
+                        turnOn={this.muteUnmute.bind(this)}
+                        turnOff={this.muteUnmute.bind(this)}
+                        img={require("./img/micro.png")}
+                    />
+                </div>
+                <div className="row">
+                    <div className="col-4 form-group">
+                            <label for="offer">MY-ID:</label>
+                            <textarea id="offer" className="form-control"></textarea>
+                            <button id="start" className="btn btn-primary" onClick={this.initLocalMedia.bind(this)}>GENERATE</button>
+                     
+                            <form id="incoming" onSubmit = {this.initConnection.bind(this)}>
+                            <label for="form" >FRIEND-ID:</label>
+                            <textarea id="form" className="form-control" ></textarea>  
+                            <p>
+                            <button type="submit" className="btn btn-primary" >CONNECTION</button>
+                            </p>
+                            </form>
+                    </div>
+                    <div className="col-8">
+                        <div className=" form-group">
+                            <label for="message">MESSAGE:</label>
+                            <textarea id="message" className="form-control"></textarea>
+                            <button id="sendMessage" className="btn btn-primary">SEND</button>
+                        </div>      
+                    </div>
+                </div>
+                <div className="row">
+                    <p>Instructions: pour demarrer une session vidéo, suivre les instructions suivantes: // pour faciliter le tout, ouvrez des fenêtre de votre navigateur</p>
+                    <p>1- Cliquer sur générer pour générer votre ID et initialiser la connexion.</p>
+                    <p>2- Copier votre ID et donner le à votre peer pour qu'il l'insère dans "FRIENDID" plus qu'il clique sur "CONNEXION"</p>
+                    <p>3- L'ID de votre peer va être généré à ce moment là, il doit vous envoyer son ID pour que vous l'insérez dans "FRIENDID" puis cliquez sur "CONNEXION" et le tour est joué !</p>
+                </div>
+            </div>    
+        );
+    }
 }
 
 export default App;
