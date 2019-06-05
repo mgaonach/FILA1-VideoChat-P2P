@@ -75,9 +75,7 @@ class App extends React.Component {
   }
 
   audioOff() {
-    console.log(this.state.localStream.getAudioTracks());
     this.state.localStream.getAudioTracks().forEach(track => {
-      alert(track);
       track.stop();
     });
   }
