@@ -14,7 +14,8 @@ class App extends React.Component {
       localStream: new MediaStream(),
       distStream: new MediaStream(),
       localPeer: null,
-      distPeer: null
+      distPeer: null,
+      messages: ""
     };
     this.videoOn();
     this.audioOn();
@@ -134,6 +135,35 @@ class App extends React.Component {
     });
   }
 
+  sendMessage(){
+    const textarea = document.getElementById("messageInput");
+    
+    const value = textarea.value;
+    if (value === '') {
+      console.log('Not sending empty message!');
+      return;
+    }
+    console.log('Sending remote message: ', value);
+    //channel.send(value);
+    //this.state.messages.push(value);
+
+    
+    this.state.messages+=  value + "\n" ;
+    textarea.value = '';
+
+    this.printMessage();
+  }
+
+  receiveMessage(){
+
+  }
+  
+  printMessage(){
+    console.log("send:"+this.state.messages)
+    const messageBox = document.getElementById("messageBox");
+    messageBox.value=this.state.messages;
+  }
+
   render() {
     return (
       <Container>
@@ -146,10 +176,6 @@ class App extends React.Component {
             <VideoFromStream stream={this.state.distStream} />
           </Col>
         </Row>  
-
-        
-
-
 
         <Row className="justify-content-md-center">
           <SwitchBtn
@@ -171,7 +197,19 @@ class App extends React.Component {
             turnOff={this.audioOff.bind(this)}
             img={require("./img/micro.png")}
           />
-          </Row>
+        </Row>
+
+        <Row className="justify-content-md-center">
+          <label> Messages 
+            <textarea  id="messageInput"  />
+          </label>
+          <input type="submit" value="Send" onClick={this.sendMessage.bind(this)}/>
+        </Row>
+        <Row className="justify-content-md-center">
+          <div >
+            <textarea  id="messageBox"  disabled />
+          </div>
+        </Row>
       </Container>
     );
   }
