@@ -63,9 +63,11 @@ class App extends React.Component {
   initConnection(event) {
     event.preventDefault();
     if (this.state.peer == null) {
-      this.state.peer = new SimplePeer({
-        initiator: false,
-        trickle: false
+      this.setState({
+        peer: new SimplePeer({
+          initiator: false,
+          trickle: false
+        })
       });
       this.bindEvents(this.state.peer);
     }
