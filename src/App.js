@@ -62,17 +62,15 @@ class App extends React.Component {
 
   initConnection(event) {
     event.preventDefault();
-    //if (this.state.peer == null) {
-    let p = new SimplePeer({
-      initiator: false,
-      trickle: false
-    });
-    this.setState({
-      peer: p
-    });
-    this.bindEvents(p);
-    //}
-    p.signal(JSON.parse(document.getElementById("form").value));
+    if (this.state.peer == null) {
+      this.state.peer = new SimplePeer({
+        initiator: false,
+        trickle: false
+      });
+      this.bindEvents(this.state.peer);
+    }
+
+    this.state.peer.signal(JSON.parse(document.getElementById("form").value));
   }
 
   muteUnmute() {
