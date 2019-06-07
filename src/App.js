@@ -28,6 +28,15 @@ class App extends React.Component {
       video.srcObject = stream;
       video.play();
     });
+
+    p.on("connect", () => {
+      console.log("CONNECT");
+      p.send("whatever" + Math.random());
+    });
+
+    p.on("data", data => {
+      console.log("got a message from peer: " + data);
+    });
   }
 
   initLocalMedia() {
@@ -62,17 +71,34 @@ class App extends React.Component {
 
   initConnection(event) {
     event.preventDefault();
-    if (this.state.peer == null) {
-      this.setState({
-        peer: new SimplePeer({
-          initiator: false,
-          trickle: false
-        })
-      });
-      this.bindEvents(this.state.peer);
-    }
+    //if (this.state.peer == null) {
+    let p = new SimplePeer({
+      initiator: false,
+      trickle: false
+    });
+    this.setState({
+      peer: p
+    });
+    this.bindEvents(p);
+    //}
 
-    this.state.peer.signal(JSON.parse(document.getElementById("form").value));
+    p.signal(JSON.parse(document.getElementById("form").value));
+  }
+
+  sendMessage(event) {
+    event.preventDefault();
+    //if (this.state.peer == null) {
+    let p = new SimplePeer({
+      initiator: false,
+      trickle: false
+    });
+    this.setState({
+      peer: p
+    });
+    this.bindEvents(p);
+    //}
+    console.log(document.getElementById("formmessage").value);
+    p.send(document.getElementById("formmessage").value);
   }
 
   muteUnmute() {
@@ -146,11 +172,17 @@ class App extends React.Component {
           </div>
           <div className="col-8">
             <div className=" form-group">
-              <label for="message">MESSAGE:</label>
-              <textarea id="message" className="form-control" />
-              <button id="sendMessage" className="btn btn-primary">
-                SEND
-              </button>
+              <form id="formmessage" onSubmit={this.sendMessage.bind(this)}>
+                <label for="message">MESSAGE:</label>
+                <textarea id="message" className="form-control" />
+                <button
+                  id="sendMessage"
+                  className="btn btn-primary"
+                  type="submit"
+                >
+                  SEND
+                </button>
+              </form>
             </div>
           </div>
         </div>
