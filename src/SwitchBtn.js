@@ -23,7 +23,12 @@ class SwitchBtn extends React.Component {
   render() {
     return (
       <button onClick={this.handle.bind(this)}>
-        <img src={this.state.value ? this.props.imgOff : this.props.imgOn} alt="" width="50" height="50" />
+        <img
+          src={this.state.value ? this.props.imgOff : this.props.imgOn}
+          alt=""
+          width="50"
+          height="50"
+        />
       </button>
     );
   }
