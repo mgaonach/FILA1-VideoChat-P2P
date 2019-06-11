@@ -19,14 +19,9 @@ class App extends React.Component {
       console.log("error", err);
     });
 
+    // notifie le peerA quand le peerB envoie une donnée
     p.on("signal", function(data) {
       document.querySelector("#offer").value = JSON.stringify(data);
-    });
-
-    p.on("stream", function(stream) {
-      let video = document.querySelector("#receiver-video");
-      video.srcObject = stream;
-      video.play();
     });
 
     p.on("connect", () => {
@@ -34,8 +29,19 @@ class App extends React.Component {
       p.send("whatever" + Math.random());
     });
 
-    p.on("data", data => {
-      console.log("got a message from peer: " + data);
+    // audio/video
+    p.on("stream", function(stream) {
+      let video = document.querySelector("#receiver-video");
+      video.srcObject = stream;
+      video.play();
+    });
+
+    // chat
+    p.on("data", function(data) {
+      let chatBox = document.getElementById("messagesBox");
+      let node = document.createElement("li");
+      node.textContent = data.toString();
+      chatBox.appendChild(node);
     });
   }
 
@@ -71,34 +77,15 @@ class App extends React.Component {
 
   initConnection(event) {
     event.preventDefault();
-    //if (this.state.peer == null) {
-    let p = new SimplePeer({
-      initiator: false,
-      trickle: false
-    });
-    this.setState({
-      peer: p
-    });
-    this.bindEvents(p);
-    //}
+    if (this.state.peer == null) {
+      this.state.peer = new SimplePeer({
+        initiator: false,
+        trickle: false
+      });
+      this.bindEvents(this.state.peer);
+    }
 
-    p.signal(JSON.parse(document.getElementById("form").value));
-  }
-
-  sendMessage(event) {
-    event.preventDefault();
-    //if (this.state.peer == null) {
-    let p = new SimplePeer({
-      initiator: false,
-      trickle: false
-    });
-    this.setState({
-      peer: p
-    });
-    this.bindEvents(p);
-    //}
-    console.log(document.getElementById("formmessage").value);
-    p.send(document.getElementById("formmessage").value);
+    this.state.peer.signal(JSON.parse(document.getElementById("form").value));
   }
 
   muteUnmute() {
@@ -111,6 +98,20 @@ class App extends React.Component {
     if (this.state.stream != null)
       this.state.stream.getVideoTracks()[0].enabled = !this.state.stream.getVideoTracks()[0]
         .enabled;
+  }
+
+  sendMessage(event) {
+    event.preventDefault();
+    if (this.state.peer == null) {
+      console.log("NULL");
+      this.state.peer = new SimplePeer({
+        initiator: false,
+        trickle: false
+      });
+      this.bindEvents(this.state.peer);
+    }
+    let message = new String(document.getElementById("message").value);
+    this.state.peer.send(message);
   }
 
   render() {
@@ -172,7 +173,7 @@ class App extends React.Component {
           </div>
           <div className="col-8">
             <div className=" form-group">
-              <form id="formmessage" onSubmit={this.sendMessage.bind(this)}>
+              <form id="messagesForm" onSubmit={this.sendMessage.bind(this)}>
                 <label for="message">MESSAGE:</label>
                 <textarea id="message" className="form-control" />
                 <button
@@ -183,6 +184,9 @@ class App extends React.Component {
                   SEND
                 </button>
               </form>
+              <div>
+                <ul id="messagesBox" />
+              </div>
             </div>
           </div>
         </div>
