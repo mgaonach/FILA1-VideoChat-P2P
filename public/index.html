@@ -19,18 +19,92 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>VideoChat</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Custom Fonts -->
+    <link
+      href="vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="vendor/simple-line-icons/css/simple-line-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link href="css/stylish-portfolio.min.css" rel="stylesheet" />
   </head>
-  <body>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-	
-	
-	
-    <div id="root">
-	
-	
-	</div>
+
+  <body id="page-top">
+    <!-- Header -->
+    <header class="masthead d-flex">
+      <div class="container text-center my-auto">
+        <h1 class="mb-1">Video Chat</h1>
+        <h3 class="mb-5">
+          <em>Hi ! Comment me</em>
+        </h3>
+        <a class="btn btn-primary btn-xl js-scroll-trigger" href="#channel"
+          >Channels</a
+        >
+      </div>
+      <div class="overlay"></div>
+    </header>
+
+    <!-- Footer -->
+    <!--
+    <footer class="footer text-center">
+      <div class="container">
+        <ul class="list-inline mb-5">
+          <li class="list-inline-item">
+            <a class="social-link rounded-circle text-white mr-3" href="#">
+              <i class="icon-social-facebook"></i>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <a class="social-link rounded-circle text-white mr-3" href="#">
+              <i class="icon-social-twitter"></i>
+            </a>
+          </li>
+          <li class="list-inline-item">
+            <a class="social-link rounded-circle text-white" href="#">
+              <i class="icon-social-github"></i>
+            </a>
+          </li>
+        </ul>
+        <p class="text-muted small mb-0">Copyright &copy; Your Website 2019</p>
+      </div>
+    </footer>
+  -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/stylish-portfolio.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css"
+    />
+
+    <div id="root"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -41,10 +115,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-	
-    
-    
-    
-  
   </body>
 </html>
