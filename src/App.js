@@ -73,6 +73,7 @@ class App extends React.Component {
   initConnection(event) {
     event.preventDefault();
     if (this.state.peer == null) {
+      // eslint-disable-next-line
       this.state.peer = new SimplePeer({
         initiator: false,
         trickle: false
@@ -99,13 +100,14 @@ class App extends React.Component {
     event.preventDefault();
     if (this.state.peer == null) {
       console.log("NULL");
+      // eslint-disable-next-line
       this.state.peer = new SimplePeer({
         initiator: false,
         trickle: false
       });
       this.bindEvents(this.state.peer);
     }
-    let message = new String(document.getElementById("message").value);
+    let message = document.getElementById("message").value;
     this.state.peer.send(message);
   }
 
