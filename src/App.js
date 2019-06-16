@@ -46,11 +46,6 @@ class App extends React.Component {
   }
 
   initLocalMedia() {
-    navigator.getUserMedia =
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia ||
-      navigator.mediaDevices.getUserMedia;
     navigator.getUserMedia(
       {
         video: true,
