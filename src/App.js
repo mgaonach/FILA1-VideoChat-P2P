@@ -21,6 +21,10 @@ class App extends React.Component {
 
     // notifie le peerA quand le peerB envoie une donnée
     p.on("signal", function(data) {
+      /*
+       * Le SDP du peer local est généré ici, soit quand on clique sur "GENERATE" (dans ce cas c'est un SDP de type offer),
+       * sinon quand on rentre un SDP offer dans "FRIEND-ID" et que l'on clique sur "CONNECTION" (dans ce cas c'est un SDP de type answer)
+       */
       document.querySelector("#offer").value = JSON.stringify(data);
     });
 
