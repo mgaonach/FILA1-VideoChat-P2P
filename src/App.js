@@ -150,25 +150,27 @@ class App extends React.Component {
             imgOff={require("./img/microoff.png")}
           />
         </div>
+        <div className="row justify-content-center">
+          <button
+            id="start"
+            className="btn btn-warning"
+            onClick={() => this.initLocalMedia(true)}
+          >
+            Create conference
+          </button>
+
+          <button
+            id="start"
+            className="btn btn-warning"
+            onClick={() => this.initLocalMedia(false)}
+          >
+            Join
+          </button>
+        </div>
         <div className="row">
           <div className="col-4 form-group">
             <label for="offer">MY-ID:</label>
             <textarea id="offer" className="form-control" />
-            <button
-              id="start"
-              className="btn btn-primary"
-              onClick={() => this.initLocalMedia(true)}
-            >
-              Create conference
-            </button>
-
-            <button
-              id="start"
-              className="btn btn-primary"
-              onClick={() => this.initLocalMedia(false)}
-            >
-              Join
-            </button>
 
             <form id="incoming" onSubmit={this.initConnection.bind(this)}>
               <label for="form">FRIEND-ID:</label>
@@ -206,8 +208,9 @@ class App extends React.Component {
             fenêtre de votre navigateur
           </p>
           <p>
-            1- Cliquer sur générer pour générer votre ID et initialiser la
-            connexion.
+            1- Cliquer sur "Create conference" si vous êtes l'initiateur de la
+            conférence, sinon cliqué sur "join" pour générer votre ID et
+            initialiser la connexion.
           </p>
           <p>
             2- Copier votre ID et donner le à votre peer pour qu'il l'insère
