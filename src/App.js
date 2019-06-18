@@ -36,11 +36,11 @@ class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
-          { this.state.usernameFormVisible ? <UsernameForm></UsernameForm> : ''}
+        { this.state.usernameFormVisible ? <UsernameForm></UsernameForm> : ''}
 
-          <Link to="/conference" onClick={ this.toggleUsernameForm }>Changer le nom d'utilisateur</Link>
-          <Routes />
-        </BrowserRouter>
+        <Link to="/conference" onClick={ this.toggleUsernameForm }>Changer le nom d'utilisateur</Link>
+        <Routes />
+      </BrowserRouter>
     );
   }
 }
