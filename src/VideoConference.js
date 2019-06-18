@@ -3,13 +3,15 @@ import "webrtc-adapter";
 import SwitchBtn from "./SwitchBtn";
 import "react-bootstrap";
 import SimplePeer from "simple-peer";
+import { withSignalChannel } from "./SignalChannel/SignalChannelProvider";
 
 class VideoConference extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       peer: null,
-      stream: null
+      stream: null,
+      streamScreen: null
     };
   }
 
@@ -49,6 +51,7 @@ class VideoConference extends React.Component {
   }
 
   initLocalMedia(isInitiator) {
+    console.log("init video");
     navigator.getUserMedia(
       {
         video: true,
@@ -58,7 +61,8 @@ class VideoConference extends React.Component {
         let p = new SimplePeer({
           initiator: isInitiator,
           stream: stream,
-          trickle: false
+          trickle: false,
+          config: { iceServers: [{ urls: ["stun://localhost:2019"] }] }
         });
         this.setState({
           peer: p,
@@ -71,6 +75,36 @@ class VideoConference extends React.Component {
       }.bind(this),
       function() {}
     );
+  }
+
+  initSharingScreen() {
+    this.hideVideo.bind(this);
+    navigator.getUserMedia(
+      {
+        video: {
+          mediaSource: "screen",
+          frameRate: { max: "10" }
+        },
+        audio: true
+      },
+      function(stream) {
+        this.state.peer.streamScreen = stream;
+        this.setState({
+          streamScreen: stream
+        });
+        this.bindEvents(this.state.peer);
+        let emitterVideo = document.querySelector("#emitter-video");
+        emitterVideo.srcObject = stream;
+        emitterVideo.play();
+      }.bind(this),
+      function() {}
+    );
+  }
+
+  hideSharingScreen() {
+    this.state.stream.getTracks().forEach(function(track) {
+      track.stop();
+    });
   }
 
   initConnection(event) {
@@ -94,9 +128,18 @@ class VideoConference extends React.Component {
   }
 
   hideVideo() {
-    if (this.state.stream != null)
-      this.state.stream.getVideoTracks()[0].enabled = !this.state.stream.getVideoTracks()[0]
-        .enabled;
+    console.log(this.state.stream.getVideoTracks()[0]);
+    if (this.state.stream != null) {
+      if (this.state.stream.getVideoTracks()[0].kind == "video") {
+        this.state.stream.getVideoTracks()[0].enabled = !this.state.stream.getVideoTracks()[0]
+          .enabled;
+      } else if (this.state.stream.getVideoTracks()[0].kind == "screen") {
+        this.state.stream.getVideoTracks().forEach(function(track) {
+          track.stop();
+        });
+        this.initSharingScreen.bind(this);
+      }
+    }
   }
 
   sendMessage(event) {
@@ -130,12 +173,20 @@ class VideoConference extends React.Component {
           imgOff={require("./img/calloff.png")}
         />
         <SwitchBtn
+          name="screen"
+          turnOn={this.hideSharingScreen.bind(this)}
+          turnOff={this.initSharingScreen.bind(this)}
+          imgOn={require("./img/screensharing.png")}
+          imgOff={require("./img/screensharing.png")}
+        />
+        <SwitchBtn
           name="video"
           turnOn={this.hideVideo.bind(this)}
           turnOff={this.hideVideo.bind(this)}
           imgOn={require("./img/webcamoff.png")}
           imgOff={require("./img/webcamon.png")}
         />
+
         <SwitchBtn
           name="audio"
           turnOn={this.muteUnmute.bind(this)}
@@ -186,4 +237,5 @@ class VideoConference extends React.Component {
   }
 }
 
+//export default withSignalChannel(VideoConference);
 export default VideoConference;
