@@ -1,14 +1,16 @@
 import React, { Component } from "react"
 
+import { withSignalChannel } from '../../SignalChannel/SignalChannelProvider'
+
 class Home extends Component {
 
     render() {
         return (
             <div>
-                Home
+                Hello, { this.props.user.name } !
             </div>
         );
     }
 }
 
-export default Home;
+export default withSignalChannel(Home);
