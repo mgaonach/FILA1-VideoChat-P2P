@@ -1,14 +1,23 @@
 import React, { Component } from "react"
+import VideoConference from '../../VideoConference'
+
+import { withSignalChannel } from '../../SignalChannel/SignalChannelProvider'
 
 class Conference extends Component {
+
+    componentWillMount(){
+        this.props.joinRoom('Accueil');
+    }
 
     render() {
         return (
             <div>
-                Conference
+                <h1>Conference</h1>
+                <VideoConference />
             </div>
         );
     }
 }
 
-export default Conference;
+export default withSignalChannel(Conference);
+

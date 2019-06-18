@@ -1,6 +1,6 @@
 import React from 'react'
 import 'react-bootstrap'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Link } from 'react-router-dom'
 
 import { withSignalChannel } from './SignalChannel/SignalChannelProvider'
 
@@ -23,7 +23,9 @@ class App extends React.Component {
     this.setState({ usernameFormVisible: false });
   }
 
-  toggleUsernameForm = () => {
+  toggleUsernameForm = (e) => {
+    e.preventDefault();
+
     if ( this.state.usernameFormVisible ) {
       this.hideUsernameForm();
     } else {
@@ -33,15 +35,12 @@ class App extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
-        <BrowserRouter>
+      <BrowserRouter>
+          { this.state.usernameFormVisible ? <UsernameForm></UsernameForm> : ''}
+
+          <Link to="/conference" onClick={ this.toggleUsernameForm }>Changer le nom d'utilisateur</Link>
           <Routes />
         </BrowserRouter>
-
-        { this.state.usernameFormVisible ? <UsernameForm></UsernameForm> : ''}
-
-        <button onClick={ this.toggleUsernameForm }>Username</button>
-      </React.Fragment>
     );
   }
 }

@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import "webrtc-adapter";
 import SwitchBtn from "./SwitchBtn";
 import "react-bootstrap";
