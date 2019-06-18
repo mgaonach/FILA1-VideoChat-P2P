@@ -1,20 +1,21 @@
 import React from "react";
-import "./App.css";
-import "webrtc-adapter";
 import "react-bootstrap";
-import VideoConference from "./VideoConference";
+import Routes from "./Routes/Routes"
+import { BrowserRouter } from 'react-router-dom'
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      showUsernameForm: false
+    };
   }
 
   render() {
     return (
-      <div>
-        <VideoConference />
-      </div>
+      <BrowserRouter>
+        <Routes />
+      </BrowserRouter>
     );
   }
 }
