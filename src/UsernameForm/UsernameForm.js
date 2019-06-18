@@ -25,7 +25,6 @@ class UsernameForm extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.setUsername(this.state.username);
-        this.props.joinRoom('Tortuga');
     }
 
     render() {

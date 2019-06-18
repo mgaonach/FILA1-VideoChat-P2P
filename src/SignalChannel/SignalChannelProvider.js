@@ -5,11 +5,11 @@ const SERVER_LOCATION = 'http://172.17.3.116:2019/';
 export const SignalChannelContext = createContext({
     user: {
         name: "",
-        sdp: ""
+        sdp: {}
     },
     peer: {
         name: "",
-        sdp: ""
+        sdp: {}
     },
     setSdp: () => { },
     joinRoom: () => { },
@@ -123,7 +123,17 @@ class SignalChannelProvider extends Component {
      */
     componentWillMount(){
         this.socket = io(SERVER_LOCATION);
-        console.log("Connexion établie avec le serveur.");
+
+        this.socket.on('connection established', (defaultUsername) => {
+            console.log("Connexion établie avec le serveur en tant que " + defaultUsername);
+
+            this.setState({
+                user: {
+                    name: defaultUsername,
+                    sdp: {}
+                }
+            });
+        });
 
         /**
          * Action si le peer change de nom d'utilisateur
