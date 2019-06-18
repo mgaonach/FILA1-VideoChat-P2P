@@ -11,6 +11,7 @@ export const SignalChannelContext = createContext({
         name: "",
         sdp: ""
     },
+    setSdp: () => { },
     joinRoom: () => { },
     leaveRoom: () => { },
     setUsername: () => {}
@@ -58,7 +59,6 @@ class SignalChannelProvider extends Component {
          * @param username The new username
          */
         setUsername: (username) => {
-            alert('changing username');
             return new Promise((resolve, reject) => {
                 if ( username == null || username === "" ){
                     reject("Bad parameter");
@@ -128,7 +128,7 @@ class SignalChannelProvider extends Component {
         /**
          * Action si le peer change de nom d'utilisateur
          */
-        this.socket.on('username set', function(previousName, newName) {
+        this.socket.on('username set', (previousName, newName) => {
             this.setState((state) => {
                 if (state.peer == null) {
                     return {
@@ -150,7 +150,7 @@ class SignalChannelProvider extends Component {
         /**
          * Action si le peer quitte le salon
          */
-        this.socket.on('peer left', function() {
+        this.socket.on('peer left', () => {
             this.setState({
                 peer: {}
             });
@@ -159,7 +159,7 @@ class SignalChannelProvider extends Component {
         /**
          * Action si le peer rejoint un salon
          */
-        this.socket.on('offer recieved', function(sdp, username) {
+        this.socket.on('offer recieved', (sdp, username) => {
             this.setState({
                 peer: {
                     name: username,
