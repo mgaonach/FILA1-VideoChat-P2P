@@ -118,110 +118,70 @@ class VideoConference extends React.Component {
   render() {
     return (
       <div className="container">
-        <div className="row">
-          <div className="col">
-            <video id="emitter-video" />
-          </div>
-          <div className="col">
-            <video id="receiver-video" />
-          </div>
-        </div>
-        <div className="row justify-content-center">
-          <SwitchBtn
-            name="p2p"
-            value={false}
-            turnOn={this.hideVideo.bind(this)}
-            turnOff={this.hideVideo.bind(this)}
-            imgOn={require("./img/callon.png")}
-            imgOff={require("./img/calloff.png")}
-          />
-          <SwitchBtn
-            name="video"
-            turnOn={this.hideVideo.bind(this)}
-            turnOff={this.hideVideo.bind(this)}
-            imgOn={require("./img/webcamoff.png")}
-            imgOff={require("./img/webcamon.png")}
-          />
-          <SwitchBtn
-            name="audio"
-            turnOn={this.muteUnmute.bind(this)}
-            turnOff={this.muteUnmute.bind(this)}
-            imgOn={require("./img/microoff.png")}
-            imgOff={require("./img/microoff.png")}
-          />
-        </div>
-        <div className="row justify-content-center">
-          <button
-            id="start"
-            className="btn btn-warning"
-            onClick={() => this.initLocalMedia(true)}
-          >
-            Create conference
-          </button>
+        <video id="emitter-video" />
 
-          <button
-            id="start"
-            className="btn btn-warning"
-            onClick={() => this.initLocalMedia(false)}
-          >
-            Join
-          </button>
-        </div>
-        <div className="row">
-          <div className="col-4 form-group">
-            <label for="offer">MY-ID:</label>
-            <textarea id="offer" className="form-control" />
+        <video id="receiver-video" />
 
-            <form id="incoming" onSubmit={this.initConnection.bind(this)}>
-              <label for="form">FRIEND-ID:</label>
-              <textarea id="form" className="form-control" />
-              <p>
-                <button type="submit" className="btn btn-primary">
-                  CONNECTION
-                </button>
-              </p>
-            </form>
-          </div>
-          <div className="col-8">
-            <div className=" form-group">
-              <form id="messagesForm" onSubmit={this.sendMessage.bind(this)}>
-                <label for="message">MESSAGE:</label>
-                <textarea id="message" className="form-control" />
-                <button
-                  id="sendMessage"
-                  className="btn btn-primary"
-                  type="submit"
-                >
-                  SEND
-                </button>
-              </form>
-              <div>
-                <ul id="messagesBox" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row">
+        <SwitchBtn
+          name="p2p"
+          value={false}
+          turnOn={this.hideVideo.bind(this)}
+          turnOff={this.hideVideo.bind(this)}
+          imgOn={require("./img/callon.png")}
+          imgOff={require("./img/calloff.png")}
+        />
+        <SwitchBtn
+          name="video"
+          turnOn={this.hideVideo.bind(this)}
+          turnOff={this.hideVideo.bind(this)}
+          imgOn={require("./img/webcamoff.png")}
+          imgOff={require("./img/webcamon.png")}
+        />
+        <SwitchBtn
+          name="audio"
+          turnOn={this.muteUnmute.bind(this)}
+          turnOff={this.muteUnmute.bind(this)}
+          imgOn={require("./img/microoff.png")}
+          imgOff={require("./img/microoff.png")}
+        />
+
+        <button
+          id="start"
+          className="btn btn-warning"
+          onClick={() => this.initLocalMedia(true)}
+        >
+          Create conference
+        </button>
+
+        <button
+          id="start"
+          className="btn btn-warning"
+          onClick={() => this.initLocalMedia(false)}
+        >
+          Join
+        </button>
+
+        <label for="offer">MY-ID:</label>
+        <textarea id="offer" className="form-control" />
+
+        <form id="incoming" onSubmit={this.initConnection.bind(this)}>
+          <label for="form">FRIEND-ID:</label>
+          <textarea id="form" className="form-control" />
           <p>
-            Instructions: pour demarrer une session vidéo, suivre les
-            instructions suivantes: // pour faciliter le tout, ouvrez des
-            fenêtre de votre navigateur
+            <button type="submit" className="btn btn-primary">
+              CONNECTION
+            </button>
           </p>
-          <p>
-            1- Cliquer sur "Create conference" si vous êtes l'initiateur de la
-            conférence, sinon cliqué sur "join" pour générer votre ID et
-            initialiser la connexion.
-          </p>
-          <p>
-            2- Copier votre ID et donner le à votre peer pour qu'il l'insère
-            dans "FRIENDID" plus qu'il clique sur "CONNEXION"
-          </p>
-          <p>
-            3- L'ID de votre peer va être généré à ce moment là, il doit vous
-            envoyer son ID pour que vous l'insérez dans "FRIENDID" puis cliquez
-            sur "CONNEXION" et le tour est joué !
-          </p>
-        </div>
+        </form>
+
+        <form id="messagesForm" onSubmit={this.sendMessage.bind(this)}>
+          <label for="message">MESSAGE:</label>
+          <textarea id="message" className="form-control" />
+          <button id="sendMessage" className="btn btn-primary" type="submit">
+            SEND
+          </button>
+        </form>
+        <ul id="messagesBox" />
       </div>
     );
   }
