@@ -7,7 +7,10 @@ export const SignalChannelContext = createContext({
         name: "",
         sdp: ""
     },
-    peer: {},
+    peer: {
+        name: "",
+        sdp: ""
+    },
     joinRoom: () => { },
     leaveRoom: () => { },
     setUsername: () => {}
@@ -55,15 +58,13 @@ class SignalChannelProvider extends Component {
          * @param username The new username
          */
         setUsername: (username) => {
+            alert('changing username');
             return new Promise((resolve, reject) => {
                 if ( username == null || username === "" ){
                     reject("Bad parameter");
                 }
 
                 this.socket.emit('set username', username, (response) => {
-                    if (response.error) 
-                        reject();
-                    
                     this.setState({
                         user: {
                             name: username
@@ -117,10 +118,16 @@ class SignalChannelProvider extends Component {
         }
     }
 
+    /**
+     * Permet de définir les réactions aux messages reçus depuis le serveur
+     */
     componentWillMount(){
-        console.log("socket.io connection here");
         this.socket = io(SERVER_LOCATION);
+        console.log("Connexion établie avec le serveur.");
 
+        /**
+         * Action si le peer change de nom d'utilisateur
+         */
         this.socket.on('username set', function(previousName, newName) {
             this.setState((state) => {
                 if (state.peer == null) {
@@ -140,12 +147,18 @@ class SignalChannelProvider extends Component {
             });
         });
 
+        /**
+         * Action si le peer quitte le salon
+         */
         this.socket.on('peer left', function() {
             this.setState({
                 peer: {}
             });
         });
 
+        /**
+         * Action si le peer rejoint un salon
+         */
         this.socket.on('offer recieved', function(sdp, username) {
             this.setState({
                 peer: {
@@ -166,7 +179,7 @@ class SignalChannelProvider extends Component {
 }
 
 /**
- * Turns a component into a SignalChannelContext.Consumer
+ * Transforme un composant en SignalChannelContext.Consumer
  * @param {*} Component Le composant qui utilisera ce contexte
  * @return le composant après ajout du contenu contexte dans la liste de ses props
  */
