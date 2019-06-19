@@ -1,5 +1,5 @@
 import React from 'react'
-import { Alert, Fade } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 import { BrowserRouter, Link } from 'react-router-dom'
 
 import { withSignalChannel } from './SignalChannel/SignalChannelProvider'
