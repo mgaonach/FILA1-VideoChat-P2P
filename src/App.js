@@ -1,5 +1,5 @@
 import React from 'react'
-import { Alert } from 'react-bootstrap'
+import { Navbar, Container, Alert } from 'react-bootstrap'
 import { BrowserRouter, Link } from 'react-router-dom'
 
 import { withSignalChannel } from './SignalChannel/SignalChannelProvider'
@@ -52,8 +52,19 @@ class App extends React.Component {
       <BrowserRouter>
         { this.state.settingsModalVisible ? <SettingsModal show={this.state.settingsModalVisible} onHide={this.hideSettingsModal}></SettingsModal> : ''}
 
-        <Link to="/conference" onClick={ this.toggleSettingsModal }>Changer le nom d'utilisateur</Link>
-        <Routes />
+        <Navbar bg="dark" variant="dark">
+          <Navbar.Brand>
+            <Link to="/" className="brand">VideoChat</Link>
+          </Navbar.Brand>
+
+          <Navbar.Text className="ml-auto settings-button-container">
+            <i className="fa fa-cog settings-button" onClick={ this.toggleSettingsModal }></i>
+          </Navbar.Text>
+        </Navbar>
+
+        <Container fluid={true}>
+          <Routes />
+        </Container>
 
         { this.renderNotification() }
       </BrowserRouter>

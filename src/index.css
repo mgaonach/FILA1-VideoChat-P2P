@@ -6,3 +6,30 @@
 
     text-align: center;
 }
+
+.brand{
+    color: white;
+}
+.brand:hover{
+    color: white;
+    text-decoration: none;
+
+    opacity: .8;
+}
+
+.settings-button-container{
+    position: relative;
+}
+    .settings-button{
+        position: absolute;
+        right: 0;
+        bottom: calc(50% - 17px);
+
+        font-size: 34px!important;
+
+        cursor: pointer;
+    }
+
+    .settings-button:hover{
+        opacity: .8;
+    }
