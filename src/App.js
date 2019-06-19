@@ -5,40 +5,40 @@ import { BrowserRouter, Link } from 'react-router-dom'
 import { withSignalChannel } from './SignalChannel/SignalChannelProvider'
 
 import Routes from './Routes/Routes'
-import UsernameForm from './UsernameForm/UsernameForm'
+import SettingsModal from './SettingsModal/SettingsModal'
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      usernameFormVisible: false
+      settingsModalVisible: false
     };
   }
 
-  showUsernameForm(){
-    this.setState({ usernameFormVisible: true });
+  showSettingsModal = () => {
+    this.setState({ settingsModalVisible: true });
   }
 
-  hideUsernameForm(){
-    this.setState({ usernameFormVisible: false });
+  hideSettingsModal = () => {
+    this.setState({ settingsModalVisible: false });
   }
 
-  toggleUsernameForm = (e) => {
+  toggleSettingsModal = (e) => {
     e.preventDefault();
 
-    if ( this.state.usernameFormVisible ) {
-      this.hideUsernameForm();
+    if ( this.state.settingsModalVisible ) {
+      this.hideSettingsModal();
     } else {
-      this.showUsernameForm();
+      this.showSettingsModal();
     }
   }
 
   render() {
     return (
       <BrowserRouter>
-        { this.state.usernameFormVisible ? <UsernameForm></UsernameForm> : ''}
+        { this.state.settingsModalVisible ? <SettingsModal show={this.state.settingsModalVisible} onHide={this.hideSettingsModal}></SettingsModal> : ''}
 
-        <Link to="/conference" onClick={ this.toggleUsernameForm }>Changer le nom d'utilisateur</Link>
+        <Link to="/conference" onClick={ this.toggleSettingsModal }>Changer le nom d'utilisateur</Link>
         <Routes />
       </BrowserRouter>
     );

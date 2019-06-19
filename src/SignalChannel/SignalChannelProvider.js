@@ -63,8 +63,9 @@ class SignalChannelProvider extends Component {
                 if ( username == null || username === "" ){
                     reject("Bad parameter");
                 }
-
+                
                 this.socket.emit('set username', username, (response) => {
+                    console.log('validation of username change');
                     this.setState({
                         user: {
                             name: username
