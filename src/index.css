@@ -1,0 +1,8 @@
+.notification{
+    width: 100%!important;
+    position: fixed!important;
+    bottom:0!important;
+    z-index: 9999;
+
+    text-align: center;
+}

@@ -5,8 +5,9 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import SignalChannelProvider from './SignalChannel/SignalChannelProvider'
+import NotificationProvider from './Notification/NotificationProvider'
 
-ReactDOM.render(<SignalChannelProvider><App /></SignalChannelProvider>, document.getElementById('root'));
+ReactDOM.render(<NotificationProvider><SignalChannelProvider><App /></SignalChannelProvider></NotificationProvider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -1,8 +1,9 @@
 import React from 'react'
-import 'react-bootstrap'
+import { Alert, Fade } from 'react-bootstrap'
 import { BrowserRouter, Link } from 'react-router-dom'
 
 import { withSignalChannel } from './SignalChannel/SignalChannelProvider'
+import { withNotification } from './Notification/NotificationProvider'
 
 import Routes from './Routes/Routes'
 import SettingsModal from './SettingsModal/SettingsModal'
@@ -33,17 +34,32 @@ class App extends React.Component {
     }
   }
 
+  renderNotification(){
+    const message = this.props.notificationMessage;
+    if ( message == null || message === '' ) {
+      return "";
+    }
+    return (
+    <Alert className="notification fade show" variant={this.props.notificationVariant}>
+      { message }
+    </Alert>
+    );
+  }
+
   render() {
+
     return (
       <BrowserRouter>
         { this.state.settingsModalVisible ? <SettingsModal show={this.state.settingsModalVisible} onHide={this.hideSettingsModal}></SettingsModal> : ''}
 
         <Link to="/conference" onClick={ this.toggleSettingsModal }>Changer le nom d'utilisateur</Link>
         <Routes />
+
+        { this.renderNotification() }
       </BrowserRouter>
     );
   }
 }
 
-export default withSignalChannel(App);
+export default withNotification(withSignalChannel(App));
 

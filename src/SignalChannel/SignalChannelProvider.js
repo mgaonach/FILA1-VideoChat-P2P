@@ -62,17 +62,17 @@ class SignalChannelProvider extends Component {
             return new Promise((resolve, reject) => {
                 if ( username == null || username === "" ){
                     reject("Bad parameter");
+                } else {
+                    this.socket.emit('set username', username, (response) => {
+                        this.setState({
+                            user: {
+                                name: username
+                            }
+                        });
+                        resolve();
+                    });
                 }
                 
-                this.socket.emit('set username', username, (response) => {
-                    console.log('validation of username change');
-                    this.setState({
-                        user: {
-                            name: username
-                        }
-                    });
-                    resolve();
-                });
             });
         },
 
