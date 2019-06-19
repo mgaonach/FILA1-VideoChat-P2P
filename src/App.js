@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navbar, Container, Alert } from 'react-bootstrap'
+import { Card, Row, Navbar, Container, Alert } from 'react-bootstrap'
 import { BrowserRouter, Link } from 'react-router-dom'
 
 import { withSignalChannel } from './SignalChannel/SignalChannelProvider'
@@ -46,25 +46,44 @@ class App extends React.Component {
     );
   }
 
+  /**
+   * Génère le contenu principal de la page
+   */
+  renderContent(){
+    return (
+      <Card className="app">
+        <Row style={{margin: '0', height: '100%'}}>
+          <Routes />
+        </Row>
+      </Card>
+    );
+  }
+
   render() {
 
     return (
       <BrowserRouter>
         { this.state.settingsModalVisible ? <SettingsModal show={this.state.settingsModalVisible} onHide={this.hideSettingsModal}></SettingsModal> : ''}
+          <Navbar className="main-header" variant="dark">
+            <Navbar.Brand>
+              <Link to="/" className="brand">
+                <i className="fa fa-video-camera"></i>&nbsp;
+                VideoChat
+              </Link>
+            </Navbar.Brand>
 
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand>
-            <Link to="/" className="brand">VideoChat</Link>
-          </Navbar.Brand>
+            <Navbar.Text className="ml-auto settings-button-container">
+              <i className="fa fa-cog settings-button" onClick={ this.toggleSettingsModal }></i>
+            </Navbar.Text>
+          </Navbar>
 
-          <Navbar.Text className="ml-auto settings-button-container">
-            <i className="fa fa-cog settings-button" onClick={ this.toggleSettingsModal }></i>
-          </Navbar.Text>
-        </Navbar>
-
-        <Container fluid={true}>
-          <Routes />
-        </Container>
+          <div className="wrapper">
+            <Container>
+          { this.props.connectionEstablished ? this.renderContent() : (
+            <i className="spin	fa fa-spinner" spin style={{color: '#eee', fontSize: '1.5em', position: 'fixed', left: '50%', top: '50%'}}></i>
+          ) }
+            </Container>
+        </div>  
 
         { this.renderNotification() }
       </BrowserRouter>

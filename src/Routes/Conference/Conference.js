@@ -11,10 +11,9 @@ class Conference extends Component {
 
     render() {
         return (
-            <div>
-                <h1>Conference</h1>
+            <React.Fragment>
                 <VideoConference />
-            </div>
+            </React.Fragment>
         );
     }
 }

@@ -11,6 +11,8 @@ export const SignalChannelContext = createContext({
         name: "",
         sdp: {}
     },
+    room: '',
+    connectionEstablished: false,
     setSdp: () => { },
     joinRoom: () => { },
     leaveRoom: () => { },
@@ -27,6 +29,7 @@ class SignalChannelProvider extends Component {
         },
         peer: {},
         room : '',
+        connectionEstablished: false,
 
         /**
          * Allows to set the local user's Session Description Protocol (SDP).
@@ -132,7 +135,8 @@ class SignalChannelProvider extends Component {
                 user: {
                     name: defaultUsername,
                     sdp: {}
-                }
+                },
+                connectionEstablished: true
             });
         });
 
