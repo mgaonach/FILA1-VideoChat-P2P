@@ -11,7 +11,7 @@ class Videos extends Component {
         return (
             <div className="videos">
                 <video>
-                    <source src="" type="" />
+                    <source src="../../../placeholder.mp4" type="" />
                 </video>
             </div>
         );

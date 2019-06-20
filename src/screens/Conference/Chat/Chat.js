@@ -39,11 +39,11 @@ class Chat extends Component {
     }
 
     isChatEnabled(){
-        const peerName = this.props.user.name; // TODO peer instead of user
+        const peerName = this.props.peer.name;
         if ( peerName == null || peerName === '' ) {
             return false;
         }
-
+        
         return true;
     }
 
