@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col } from 'react-bootstrap';
+import {  } from 'react-bootstrap';
 
 import { withSignalChannel } from '../../../context/SignalChannel/SignalChannelProvider';
 
@@ -9,7 +9,11 @@ class Videos extends Component {
 
     render() {
         return (
-            <div>Vidéos</div>
+            <div className="videos">
+                <video>
+                    <source src="" type="" />
+                </video>
+            </div>
         );
     }
 }

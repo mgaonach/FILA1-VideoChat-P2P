@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Route, Switch, withRouter, Link } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 
 import Home from './screens/Lobby/Lobby';
 import Conference from './screens/Conference/Conference';

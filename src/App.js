@@ -67,7 +67,7 @@ class App extends React.Component {
           <div className="wrapper">
             <Container>
           { this.props.connectionEstablished ? <Routes /> : (
-            <i className="spin	fa fa-spinner" spin style={{color: '#eee', fontSize: '1.5em', position: 'fixed', left: '50%', top: '50%'}}></i>
+            <i className="spin	fa fa-spinner" spin="true" style={{color: '#eee', fontSize: '1.5em', position: 'fixed', left: '50%', top: '50%'}}></i>
           ) }
             </Container>
         </div>  
