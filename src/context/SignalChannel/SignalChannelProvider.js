@@ -6,19 +6,21 @@ const SERVER_LOCATION = 'http://192.168.0.12:2019/';
 export const SignalChannelContext = createContext({
     user: {
         name: "",
-        sdp: {}
+        sdp: null
     },
     peer: {
         name: "",
-        sdp: {}
+        sdp: null
     },
-    room: '',
+    room: "",
     connectionEstablished: false,
+    offerListeners: [],
+    addOfferListener: () => {},
+    clearOfferListeners: () => {},
     setSdp: () => { },
     joinRoom: () => { },
     leaveRoom: () => { },
-    setUsername: () => {},
-    waitForSignal: () => {}
+    setUsername: () => {}
 });
 
 class SignalChannelProvider extends Component {
@@ -27,15 +29,42 @@ class SignalChannelProvider extends Component {
     state = {
         user: {
             name: "",
-            sdp: ""
+            sdp: null
         },
         peer: {
             name: "",
-            sdp: {}
+            sdp: null
         },
-        room : '',
+        room : "",
         connectionEstablished: false,
+        offerListeners: [],
 
+        /**
+         * Permet d'ajouter une fonction pour réagir en cas de réception d'offre de communication
+         * @param listener La fonction à appeler
+         */
+        addOfferListener: (listener) => {
+            if ( listener == null || typeof listener !== 'function') {
+                return false;
+            }
+
+            this.setState(state => {
+                const listeners = state.offerListeners;
+                listeners.push(listener);
+
+                return {
+                    offerListeners: listeners
+                };
+            });
+        },
+        /**
+         * Permet vider les listeners d'offres
+         */
+        clearOfferListeners: () => { // TODO améliorer
+            this.setState({
+                offerListeners: []
+            });
+        },
         /**
          * Allows to set the local user's Session Description Protocol (SDP).
          * It will be sent to peers to make communication possible
@@ -48,16 +77,18 @@ class SignalChannelProvider extends Component {
                 }
 
                 this.socket.emit('set sdp', sdp, (response) => {
-                    if (response.error) {
+                    if (response.error != null) {
                         reject();
+                    } else {
+                        this.setState(state => {
+                            return {
+                                user: Object.assign({}, state.user, {
+                                    sdp: sdp
+                                })
+                            }
+                        });
+                        resolve();
                     }
-                    
-                    this.setState({
-                        user: {
-                            sdp: sdp
-                        }
-                    });
-                    resolve();
                 });
             });
         },
@@ -72,9 +103,11 @@ class SignalChannelProvider extends Component {
                     reject("Bad parameter");
                 } else {
                     this.socket.emit('set username', username, (response) => {
-                        this.setState({
-                            user: {
-                                name: username
+                        this.setState(state => {
+                            return {
+                                user: Object.assign({}, state.user, {
+                                    name: username
+                                })
                             }
                         });
                         resolve();
@@ -146,7 +179,7 @@ class SignalChannelProvider extends Component {
             this.setState({
                 user: {
                     name: defaultUsername,
-                    sdp: {}
+                    sdp: null
                 },
                 connectionEstablished: true
             });
@@ -160,15 +193,15 @@ class SignalChannelProvider extends Component {
                 if (state.peer == null) {
                     return {
                         peer: {
-                            name: newName
+                            name: newName,
+                            sdp: null
                         }
                     };
                 } else {
                     return {
-                        peer: {
+                        peer: Object.assign({}, state.peer, {
                             name: newName,
-                            sdp: state.peer.sdp
-                        }
+                        })
                     };
                 }
             });
@@ -179,20 +212,29 @@ class SignalChannelProvider extends Component {
          */
         this.socket.on('peer left', () => {
             this.setState({
-                peer: {}
+                peer: {
+                    username: '',
+                    sdp: null
+                }
             });
         });
 
         /**
          * Action si le peer rejoint un salon
          */
-        this.socket.on('offer recieved', (sdp, username) => {
+        this.socket.on('offer received', (sdp, username) => {
             this.setState({
                 peer: {
                     name: username,
                     sdp: sdp
                 }
             });
+
+            // Appel des listeners d'offres
+            const listeners = this.state.offerListeners;
+            for(let i = 0, len = listeners.length; i < len; i++){
+                listeners[i](this.state.peer.sdp);
+            }
         })
     }
 

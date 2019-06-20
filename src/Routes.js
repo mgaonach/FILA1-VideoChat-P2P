@@ -17,8 +17,8 @@ class Routes extends Component {
         return (
             <React.Fragment>
                 <TransitionGroup>
-                    <CSSTransition classNames={'fade'} key={this.props.location.key} timeout={{enter: 300, exit: 0}}>
-                        <Switch>
+                    <CSSTransition classNames={'fade'} key={this.props.location.key} timeout={{enter: 300, exit: 0}} exit={false}>
+                        <Switch location={this.props.location}>
                             <Route path="/" exact component={Home} />
                             <Route path="/conference" component={Conference} />
                             <Route render={(props) => <Error code="404" />} />

@@ -20,7 +20,7 @@ class Chat extends Component {
             return 'En attente de pair...';
         }
 
-        return peerName;
+        return 'avec ' + peerName;
     }
 
     renderMessages(){

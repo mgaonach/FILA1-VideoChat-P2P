@@ -9,12 +9,22 @@ import Videos from './Videos/Videos'
 import Chat from './Chat/Chat'
 
 class Conference extends Component {
+    state = {
+        showVideos : false
+    }
 
-    componentWillMount(){
+    componentDidMount(){
         if ( this.props.room == null || this.props.room === '' ) {
-            // TODO uncomment
-            //this.props.history.push('/');
+            this.props.history.push('/');
+        } else {
+            this.setState({
+                showVideos : true
+            });
         }
+    }
+
+    componentWillUnmount(){
+        this.props.leaveRoom();
     }
 
     render() {
@@ -23,7 +33,7 @@ class Conference extends Component {
             <Card className="screen">
                 <Row>
                     <Col xs={9} style={todoStyle}>
-                        <Videos />
+                        { this.state.showVideos ? <Videos /> : ''}
                     </Col>
                     <Col style={todoStyle}>
                         <Chat />
