@@ -1,8 +1,8 @@
 import React, { Component } from "react"
 import { Modal, Button, Form } from 'react-bootstrap'
 
-import { withSignalChannel } from '../SignalChannel/SignalChannelProvider'
-import { withNotification } from '../Notification/NotificationProvider'
+import { withSignalChannel } from '../context/SignalChannel/SignalChannelProvider'
+import { withNotification } from '../context/Notification/NotificationProvider'
 
 class SettingsModal extends Component {
     constructor(){
@@ -17,6 +17,8 @@ class SettingsModal extends Component {
         this.setState((state, props) => {
             return {username: props.user.name};
         });
+
+        this.usernameInput.focus();
     }
 
     handleUsernameChange = (e) => {
@@ -45,7 +47,13 @@ class SettingsModal extends Component {
                     <Form onSubmit={ this.handleSubmit }>
                         <Form.Group controlId="formBasicEmail">
                             <Form.Label>Nom d'utilisateur</Form.Label>
-                            <Form.Control type="text" onChange={ this.handleUsernameChange } value={ this.state.username } placeholder="Saissez un nom d'utilisateur" />
+                            <Form.Control 
+                                type="text" 
+                                onChange={ this.handleUsernameChange } 
+                                value={ this.state.username } 
+                                placeholder="Saissez un nom d'utilisateur" 
+                                ref={(input) => { this.usernameInput = input; }} 
+                            />
                         </Form.Group>
                     </Form>
                 </Modal.Body>

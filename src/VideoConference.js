@@ -126,22 +126,22 @@ class VideoConference extends React.Component {
           value={false}
           turnOn={this.hideVideo.bind(this)}
           turnOff={this.hideVideo.bind(this)}
-          imgOn={require("./img/callon.png")}
-          imgOff={require("./img/calloff.png")}
+          imgOn={require("./images/callon.png")}
+          imgOff={require("./images/calloff.png")}
         />
         <SwitchBtn
           name="video"
           turnOn={this.hideVideo.bind(this)}
           turnOff={this.hideVideo.bind(this)}
-          imgOn={require("./img/webcamoff.png")}
-          imgOff={require("./img/webcamon.png")}
+          imgOn={require("./images/webcamoff.png")}
+          imgOff={require("./images/webcamon.png")}
         />
         <SwitchBtn
           name="audio"
           turnOn={this.muteUnmute.bind(this)}
           turnOff={this.muteUnmute.bind(this)}
-          imgOn={require("./img/microoff.png")}
-          imgOff={require("./img/microoff.png")}
+          imgOn={require("./images/microoff.png")}
+          imgOff={require("./images/microoff.png")}
         />
 
         <button

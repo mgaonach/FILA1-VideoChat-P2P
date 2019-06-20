@@ -5,8 +5,8 @@ import '../node_modules/font-awesome/css/font-awesome.min.css'
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import SignalChannelProvider from './SignalChannel/SignalChannelProvider'
-import NotificationProvider from './Notification/NotificationProvider'
+import SignalChannelProvider from './context/SignalChannel/SignalChannelProvider'
+import NotificationProvider from './context/Notification/NotificationProvider'
 
 ReactDOM.render(<NotificationProvider><SignalChannelProvider><App /></SignalChannelProvider></NotificationProvider>, document.getElementById('root'));
 

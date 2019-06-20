@@ -16,7 +16,8 @@ export const SignalChannelContext = createContext({
     setSdp: () => { },
     joinRoom: () => { },
     leaveRoom: () => { },
-    setUsername: () => {}
+    setUsername: () => {},
+    waitForSignal: () => {}
 });
 
 class SignalChannelProvider extends Component {
@@ -27,7 +28,10 @@ class SignalChannelProvider extends Component {
             name: "",
             sdp: ""
         },
-        peer: {},
+        peer: {
+            name: "",
+            sdp: {}
+        },
         room : '',
         connectionEstablished: false,
 
@@ -87,18 +91,16 @@ class SignalChannelProvider extends Component {
             return new Promise((resolve, reject) => {
                 if ( room == null || room === "" ){
                     reject("Bad parameter");
-                }
-
-                this.socket.emit('join room', room, (response) => {
-                    if (response.error) {
-                        reject();
-                    }
-                    
-                    this.setState({
-                        room: room
+                } else {
+                    this.waitForSignal();
+                    this.socket.emit('join room', room, (response) => {
+                        this.setState({
+                            room: room,
+                            connectionEstablished: true
+                        });
+                        resolve();
                     });
-                    resolve();
-                });
+                }
             });
         },
 
@@ -120,6 +122,15 @@ class SignalChannelProvider extends Component {
                 });
             });
         }
+    }
+
+    /**
+     * Permet d'indiquer que l'application en attente du signal channel
+     */
+    waitForSignal = () => {
+        this.setState({
+            connectionEstablished: false
+        });
     }
 
     /**

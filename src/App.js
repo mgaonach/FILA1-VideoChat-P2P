@@ -1,12 +1,12 @@
 import React from 'react'
-import { Card, Row, Navbar, Container, Alert } from 'react-bootstrap'
+import { Navbar, Container, Alert } from 'react-bootstrap'
 import { BrowserRouter, Link } from 'react-router-dom'
 
-import { withSignalChannel } from './SignalChannel/SignalChannelProvider'
-import { withNotification } from './Notification/NotificationProvider'
+import { withSignalChannel } from './context/SignalChannel/SignalChannelProvider'
+import { withNotification } from './context/Notification/NotificationProvider'
 
-import Routes from './Routes/Routes'
-import SettingsModal from './SettingsModal/SettingsModal'
+import Routes from './Routes'
+import SettingsModal from './components/SettingsModal'
 
 class App extends React.Component {
   constructor(props) {
@@ -46,19 +46,6 @@ class App extends React.Component {
     );
   }
 
-  /**
-   * Génère le contenu principal de la page
-   */
-  renderContent(){
-    return (
-      <Card className="app">
-        <Row style={{margin: '0', height: '100%'}}>
-          <Routes />
-        </Row>
-      </Card>
-    );
-  }
-
   render() {
 
     return (
@@ -79,7 +66,7 @@ class App extends React.Component {
 
           <div className="wrapper">
             <Container>
-          { this.props.connectionEstablished ? this.renderContent() : (
+          { this.props.connectionEstablished ? <Routes /> : (
             <i className="spin	fa fa-spinner" spin style={{color: '#eee', fontSize: '1.5em', position: 'fixed', left: '50%', top: '50%'}}></i>
           ) }
             </Container>

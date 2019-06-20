@@ -1,0 +1,19 @@
+.code, .message{
+}
+
+.code{
+    background-color: #2B244D!important;
+}
+.code-text{
+    color: #eee!important;
+    font-size:3em!important;
+    font-weight: bold!important;
+}
+
+.message{
+    height:100%!important;
+    display:flex!important;
+    flex-direction: column!important;
+    justify-content: space-around!important;
+    font-size: 3em!important;
+}
