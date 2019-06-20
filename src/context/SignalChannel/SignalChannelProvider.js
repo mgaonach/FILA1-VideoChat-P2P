@@ -14,13 +14,11 @@ export const SignalChannelContext = createContext({
     },
     room: "",
     connectionEstablished: false,
-    offerListeners: [],
-    addOfferListener: () => {},
-    clearOfferListeners: () => {},
     setSdp: () => { },
     joinRoom: () => { },
     leaveRoom: () => { },
-    setUsername: () => {}
+    setUsername: () => { },
+    waitForSignal: () => { }
 });
 
 class SignalChannelProvider extends Component {
@@ -35,36 +33,8 @@ class SignalChannelProvider extends Component {
             name: "",
             sdp: null
         },
-        room : "",
+        room: "",
         connectionEstablished: false,
-        offerListeners: [],
-
-        /**
-         * Permet d'ajouter une fonction pour réagir en cas de réception d'offre de communication
-         * @param listener La fonction à appeler
-         */
-        addOfferListener: (listener) => {
-            if ( listener == null || typeof listener !== 'function') {
-                return false;
-            }
-
-            this.setState(state => {
-                const listeners = state.offerListeners;
-                listeners.push(listener);
-
-                return {
-                    offerListeners: listeners
-                };
-            });
-        },
-        /**
-         * Permet vider les listeners d'offres
-         */
-        clearOfferListeners: () => { // TODO améliorer
-            this.setState({
-                offerListeners: []
-            });
-        },
         /**
          * Allows to set the local user's Session Description Protocol (SDP).
          * It will be sent to peers to make communication possible
@@ -72,7 +42,7 @@ class SignalChannelProvider extends Component {
          */
         setSdp: (sdp) => {
             return new Promise((resolve, reject) => {
-                if ( sdp == null ) {
+                if (sdp == null) {
                     reject("Bad parameter");
                 }
 
@@ -99,7 +69,7 @@ class SignalChannelProvider extends Component {
          */
         setUsername: (username) => {
             return new Promise((resolve, reject) => {
-                if ( username == null || username === "" ){
+                if (username == null || username === "") {
                     reject("Bad parameter");
                 } else {
                     this.socket.emit('set username', username, (response) => {
@@ -113,7 +83,7 @@ class SignalChannelProvider extends Component {
                         resolve();
                     });
                 }
-                
+
             });
         },
 
@@ -121,12 +91,12 @@ class SignalChannelProvider extends Component {
          * Allows to request joining a room
          * @param room The name of the room to join
          */
-        joinRoom: (room) => { 
+        joinRoom: (room) => {
             return new Promise((resolve, reject) => {
-                if ( room == null || room === "" ){
+                if (room == null || room === "") {
                     reject("Bad parameter");
                 } else {
-                    this.waitForSignal();
+                    this.state.waitForSignal();
                     this.socket.emit('join room', room, (response) => {
                         this.setState({
                             room: room,
@@ -147,7 +117,7 @@ class SignalChannelProvider extends Component {
                     if (response.error) {
                         reject();
                     }
-                    
+
                     this.setState({
                         peer: {},
                         room: ''
@@ -155,22 +125,21 @@ class SignalChannelProvider extends Component {
                     resolve();
                 });
             });
+        },
+        /**
+         * Permet d'indiquer que l'application en attente du signal channel
+         */
+        waitForSignal: () => {
+            this.setState({
+                connectionEstablished: false
+            });
         }
-    }
-
-    /**
-     * Permet d'indiquer que l'application en attente du signal channel
-     */
-    waitForSignal = () => {
-        this.setState({
-            connectionEstablished: false
-        });
     }
 
     /**
      * Permet de définir les réactions aux messages reçus depuis le serveur
      */
-    componentWillMount(){
+    componentWillMount() {
         this.socket = io(SERVER_LOCATION);
 
         this.socket.on('connection established', (defaultUsername) => {
@@ -227,14 +196,9 @@ class SignalChannelProvider extends Component {
                 peer: {
                     name: username,
                     sdp: sdp
-                }
+                },
+                connectionEstablished: true
             });
-
-            // Appel des listeners d'offres
-            const listeners = this.state.offerListeners;
-            for(let i = 0, len = listeners.length; i < len; i++){
-                listeners[i](this.state.peer.sdp);
-            }
         })
     }
 

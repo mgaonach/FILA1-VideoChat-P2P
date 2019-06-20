@@ -12,56 +12,49 @@ class Videos extends Component {
 
         this.userVideoRef = React.createRef();
         this.peerVideoRef = React.createRef();
-
-        this.sp = null; // SimplePeer
-    }
-
-    bindEvents(p) {
-        p.on('signal', data => {
-            this.props.setSdp(data);
-        });
-
-        p.on('stream', stream => {
-            alert('stream on');
-            const peerVideo = this.peerVideoRef.current
-            peerVideo.srcObject = stream;
-            peerVideo.play();
-        });
-    }
-
-    componentWillUnmount(){
-        this.props.clearOfferListeners();
     }
 
     /**
-     * On active la caméra et le micro dès le chargement du composant
+     * Réagir aux événements SimplePeer
      */
-    componentDidMount(){
-        this.props.addOfferListener(this.offerDidArrive);
-        navigator.mediaDevices.getUserMedia({video: true, audio: true})
-        .then(stream => {
-            this.sp = new SimplePeer({
-                initiator: true,
-                stream: stream,
-                trickle: false
-            });
-
-            this.bindEvents(this.sp);
-
-            const userVideo = this.userVideoRef.current
-            userVideo.srcObject = stream;
-            userVideo.play();
+    bindEvents(p){
+        p.on('error', err => alert(err))
+        p.on('signal', data => {
+            this.props.setSdp(data);
         })
-        .catch(err => {
-            alert(err);
-        });
     }
 
-    offerDidArrive = (offer) => {
-        if (offer != null) {
-            
-            this.sp.signal(offer);
-        }
+    componentWillMount(){
+        this.startPeer(true);
+    }
+
+    /**
+     * @param {*} initiator 
+     */
+    startPeer(isInitiator){
+        navigator.mediaDevices.getUserMedia({video: true, audio: true})
+            .then(stream => {
+                let p = new SimplePeer({
+                    initiator: isInitiator,
+                    stream: stream,
+                    trickle: false
+                }); 
+                
+                this.bindEvents(p);
+                
+                this.setState({
+                    peer: p,
+                    stream: stream
+                });
+
+
+                const userVideo = this.userVideoRef.current
+                userVideo.srcObject = stream;
+                userVideo.play();
+            })
+            .catch(err => {
+                alert(err);
+            });
     }
 
     render() {
