@@ -12,6 +12,7 @@ export const SignalChannelContext = createContext({
         name: "",
         sdp: null
     },
+    offerReceived: false,
     room: "",
     connectionEstablished: false,
     setSdp: () => { },
@@ -33,6 +34,7 @@ class SignalChannelProvider extends Component {
             name: "",
             sdp: null
         },
+        offerReceived: false,
         room: "",
         connectionEstablished: false,
         /**
@@ -139,7 +141,7 @@ class SignalChannelProvider extends Component {
     /**
      * Permet de définir les réactions aux messages reçus depuis le serveur
      */
-    componentWillMount() {
+    componentDidMount() {
         this.socket = io(SERVER_LOCATION);
 
         this.socket.on('connection established', (defaultUsername) => {
@@ -196,8 +198,7 @@ class SignalChannelProvider extends Component {
                 peer: {
                     name: username,
                     sdp: sdp
-                },
-                connectionEstablished: true
+                }
             });
         })
     }

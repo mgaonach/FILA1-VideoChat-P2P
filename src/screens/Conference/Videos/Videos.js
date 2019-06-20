@@ -12,49 +12,73 @@ class Videos extends Component {
 
         this.userVideoRef = React.createRef();
         this.peerVideoRef = React.createRef();
+
+        this.state = {
+            localPeer: null,
+            remotePeer: null,
+            stream: null
+        }
     }
 
-    /**
-     * Réagir aux événements SimplePeer
-     */
-    bindEvents(p){
-        p.on('error', err => alert(err))
-        p.on('signal', data => {
-            this.props.setSdp(data);
-        })
+    componentDidMount(){
+        this.createLocalPeer();
+        this.createRemotePeer();
     }
 
-    componentWillMount(){
-        this.startPeer(true);
-    }
-
-    /**
-     * @param {*} initiator 
-     */
-    startPeer(isInitiator){
+    createLocalPeer() {
         navigator.mediaDevices.getUserMedia({video: true, audio: true})
             .then(stream => {
                 let p = new SimplePeer({
-                    initiator: isInitiator,
+                    initiator: true,
                     stream: stream,
                     trickle: false
                 }); 
-                
-                this.bindEvents(p);
-                
-                this.setState({
-                    peer: p,
-                    stream: stream
+                console.log("local");
+                console.log(stream);
+
+                p.on('signal', data => {
+                    this.props.setSdp(data);
                 });
 
+                this.setState({
+                    stream: stream,
+                    localPeer: p
+                });
 
-                const userVideo = this.userVideoRef.current
+                /*const userVideo = this.userVideoRef.current
                 userVideo.srcObject = stream;
-                userVideo.play();
+                userVideo.play();*/
             })
             .catch(err => {
                 alert(err);
             });
+    }
+
+    createRemotePeer() {
+        setTimeout(() => {
+            let p = new SimplePeer({
+                initiator: false,
+                trickle: false
+            }); 
+
+            p.on('error', err => {console.log('error', err)});
+    
+            p.on('stream', stream => {
+                console.log("remote");
+                console.log(stream);
+                const peerVideo = this.peerVideoRef.current
+                peerVideo.srcObject = stream;
+                peerVideo.onloadedmetadata = function(e) {
+                    peerVideo.play();
+                  };
+            });
+    
+            this.setState({
+                remotePeer: p
+            });
+    
+            p.signal(this.props.peer.sdp);
+        }, 10000);
     }
 
     render() {
