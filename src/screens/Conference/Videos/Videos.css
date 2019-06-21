@@ -33,7 +33,22 @@
 .devControls button{
     margin-bottom: 5px;
     width: 100px;
+    padding: 2px; 
+    border:none;
+
+    background-color: #2B244D !important;
+    border-radius: 2px;
+
+    color: #fff;
+
+    transition: all 20ms ease-in-out;
+
+    cursor: pointer;
 }
+.devControls button:hover{
+    opacity: 0.9;
+}
+
 .devControls input{
     width: 200px;
     margin-bottom: 5px;
