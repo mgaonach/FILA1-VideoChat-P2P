@@ -4,7 +4,6 @@ import "webrtc-adapter";
 import { withSignalChannel } from '../../../context/SignalChannel/SignalChannelProvider';
 import SimplePeer from "simple-peer";
 
-import { Row, Col } from 'react-bootstrap';
 import './Videos.css';
 
 class Videos extends Component {
