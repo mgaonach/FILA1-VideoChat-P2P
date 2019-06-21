@@ -10,13 +10,17 @@ class Chat extends Component {
         messageInput : ''
     }
 
+    componentDidMount(){
+        this.props.setSdp({});
+    }
+
     renderPeerName(){
-        const peerName = this.props.peer.name;
+        /*const peerName = this.props.peer.name;
         if ( peerName == null || peerName === '' ) {
             return 'En attente de pair...';
-        }
+        }*/
 
-        return 'avec ' + peerName;
+        return this.props.room;
     }
 
     renderMessages(){

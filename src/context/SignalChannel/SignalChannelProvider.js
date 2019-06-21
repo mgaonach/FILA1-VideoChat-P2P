@@ -254,11 +254,6 @@ class SignalChannelProvider extends Component {
                     sdp: offer
                 }
             });
-
-            if ( typeof this.state.receiverCallback === 'function') {
-                this.state.receiverCallback();
-            }
-
         })
 
         /**
