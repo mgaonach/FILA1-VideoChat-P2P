@@ -17,3 +17,32 @@
     
     box-shadow: 0 4px 12px 0px rgba(0, 0, 0, .25);
 }
+
+.devControls{
+    position: fixed;
+    bottom: 0;
+    padding: 10px;
+
+    background-color: #fff !important;
+
+    border-top: 2px solid #2B244D;
+    border-right: 2px solid #2B244D;
+    color: #2B244D;
+}
+
+.devControls button{
+    margin-bottom: 5px;
+    width: 100px;
+}
+.devControls input{
+    width: 200px;
+    margin-bottom: 5px;
+
+    border: none;
+
+    background-color: #eee;
+}
+
+#messagesForm_test{
+    display: none;
+}

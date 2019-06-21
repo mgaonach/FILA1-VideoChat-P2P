@@ -15,7 +15,7 @@ export const SignalChannelContext = createContext({
     room: "",
     connectionEstablished: false,
     initiator: false,
-    receiverCallback : null,
+    receiverCallback : () => {},
     setReceiverCallback : () => {},
     sendOffer: () => { },
     sendANswer: () => { },
@@ -41,7 +41,7 @@ class SignalChannelProvider extends Component {
         room: "",
         connectionEstablished: false,
         initiator: false,
-        receiverCallback : null,
+        receiverCallback : () => {},
         setReceiverCallback : (callback) => {
             this.setState({receiverCallback: callback});
         },

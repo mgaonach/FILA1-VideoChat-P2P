@@ -10,7 +10,9 @@ import Chat from './Chat/Chat'
 
 class Conference extends Component {
     state = {
-        showVideos : false
+        showVideos : false,
+        messages: [
+        ]
     }
 
     componentDidMount(){
@@ -23,6 +25,26 @@ class Conference extends Component {
         }
     }
 
+    clearMessages = () => {
+        this.setState({
+            messages: []
+        });
+    }
+
+    addMessage = (text, peer = false) => {
+        this.setState(state => {
+            const messages = state.messages;
+            messages.push({
+                text: text,
+                peer: peer
+            });
+
+            return {
+                messages: messages
+            };
+        });
+    }
+
     componentWillUnmount(){
         this.props.leaveRoom();
     }
@@ -33,10 +55,10 @@ class Conference extends Component {
             <Card className="screen">
                 <Row>
                     <Col xs={9} style={todoStyle}>
-                        { this.state.showVideos ? <Videos /> : ''}
+                        { this.state.showVideos ? <Videos addChatMessage={ this.addMessage }/> : ''}
                     </Col>
                     <Col style={todoStyle}>
-                        <Chat />
+                        <Chat messages={this.state.messages} />
                     </Col>
                 </Row>
             </Card>

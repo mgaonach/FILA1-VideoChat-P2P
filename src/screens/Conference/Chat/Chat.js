@@ -7,11 +7,7 @@ import './Chat.css';
 
 class Chat extends Component {
     state = {
-        messageInput : '',
-        messages : [
-            {text: 'Aloha ! :D', peer: true},
-            {text: 'Ahoy !'},
-        ]
+        messageInput : ''
     }
 
     renderPeerName(){
@@ -25,8 +21,8 @@ class Chat extends Component {
 
     renderMessages(){
         const messages = [];
-        for(let i = 0, len = this.state.messages.length; i < len ; i++) {
-            const message = this.state.messages[i];
+        for(let i = 0, len = this.props.messages.length; i < len ; i++) {
+            const message = this.props.messages[i];
 
             if ( message.peer ) {
                 messages.push(<li key={message.text + Math.random().toString()} className="peer">{message.text}</li>)
@@ -38,11 +34,11 @@ class Chat extends Component {
         return messages;
     }
 
-    isChatEnabled(){
-        const peerName = this.props.peer.name;
+    isChatEnabled(){ // TODO
+        /*const peerName = this.props.peer.name;
         if ( peerName == null || peerName === '' ) {
             return false;
-        }
+        }*/
         
         return true;
     }
@@ -55,6 +51,12 @@ class Chat extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+        document.getElementById("message").value = this.state.messageInput
+        document.getElementById("sendMessage").click();
+
+        this.setState({
+            messageInput: ''
+        });
     }
 
     render() {
