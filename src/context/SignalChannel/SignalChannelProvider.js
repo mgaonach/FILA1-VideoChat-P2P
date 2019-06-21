@@ -12,9 +12,13 @@ export const SignalChannelContext = createContext({
         name: "",
         sdp: null
     },
-    offerReceived: false,
     room: "",
     connectionEstablished: false,
+    initiator: false,
+    receiverCallback : null,
+    setReceiverCallback : () => {},
+    sendOffer: () => { },
+    sendANswer: () => { },
     setSdp: () => { },
     joinRoom: () => { },
     leaveRoom: () => { },
@@ -34,9 +38,58 @@ class SignalChannelProvider extends Component {
             name: "",
             sdp: null
         },
-        offerReceived: false,
         room: "",
         connectionEstablished: false,
+        initiator: false,
+        receiverCallback : null,
+        setReceiverCallback : (callback) => {
+            this.setState({receiverCallback: callback});
+        },
+        sendOffer: (offer) => {
+            return new Promise((resolve, reject) => {
+                if (offer == null) {
+                    reject("Bad parameter");
+                }
+
+                this.socket.emit('send offer', offer, (response) => {
+                    if (response.error != null) {
+                        alert('no offer, sorry');
+                        reject();
+                    } else {
+                        this.setState(state => {
+                            return {
+                                user: Object.assign({}, state.user, {
+                                    sdp: offer
+                                })
+                            };
+                        });
+                        resolve();
+                    }
+                });
+            });
+        },
+        sendAnswer: (answer) => {
+            return new Promise((resolve, reject) => {
+                if (answer == null) {
+                    reject("Bad parameter");
+                }
+
+                this.socket.emit('send answer', answer, (response) => {
+                    if (response.error != null) {
+                        reject();
+                    } else {
+                        this.setState(state => {
+                            return {
+                                user: Object.assign({}, state.user, {
+                                    sdp: answer
+                                })
+                            };
+                        });
+                        resolve();
+                    }
+                });
+            });
+        },
         /**
          * Allows to set the local user's Session Description Protocol (SDP).
          * It will be sent to peers to make communication possible
@@ -102,7 +155,8 @@ class SignalChannelProvider extends Component {
                     this.socket.emit('join room', room, (response) => {
                         this.setState({
                             room: room,
-                            connectionEstablished: true
+                            connectionEstablished: true,
+                            initiator: response.initiator
                         });
                         resolve();
                     });
@@ -193,11 +247,28 @@ class SignalChannelProvider extends Component {
         /**
          * Action si le peer rejoint un salon
          */
-        this.socket.on('offer received', (sdp, username) => {
+        this.socket.on('offer received', (offer, username) => {
             this.setState({
                 peer: {
                     name: username,
-                    sdp: sdp
+                    sdp: offer
+                }
+            });
+
+            if ( typeof this.state.receiverCallback === 'function') {
+                this.state.receiverCallback();
+            }
+
+        })
+
+        /**
+         * Action si le peer rejoint un salon
+         */
+        this.socket.on('answer received', (answer, username) => {
+            this.setState({
+                peer: {
+                    name: username,
+                    sdp: answer
                 }
             });
         })

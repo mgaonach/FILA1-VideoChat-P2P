@@ -14,86 +14,115 @@ class Videos extends Component {
         this.peerVideoRef = React.createRef();
 
         this.state = {
-            localPeer: null,
-            remotePeer: null,
+            peer: null,
             stream: null
         }
     }
 
-    componentDidMount(){
-        this.createLocalPeer();
-        this.createRemotePeer();
+    componentDidMount() {
+        this.props.setReceiverCallback(this.initConnection);
+
+        if ( this.props.initiator ) {
+            this.initLocalMedia();
+        }
     }
 
-    createLocalPeer() {
-        navigator.mediaDevices.getUserMedia({video: true, audio: true})
+    bindEvents(p) {
+        p.on("error", (err) => {
+            console.log("error", err);
+        });
+
+        // notifie le peerA quand le peerB envoie une donnée
+        p.on("signal", (data) => {
+            /*
+             * Le SDP du peer local est généré ici, soit quand on clique sur "GENERATE" (dans ce cas c'est un SDP de type offer),
+             * sinon quand on rentre un SDP offer dans "FRIEND-ID" et que l'on clique sur "CONNECTION" (dans ce cas c'est un SDP de type answer)
+             */
+            if ( this.props.initiator ) {
+                this.props.sendOffer(data);
+            } else {
+                this.props.sendAnswer(data);
+            }
+        });
+
+        p.on("connect", () => {
+          console.log("CONNECT");
+          p.send("whatever" + Math.random());
+        });
+
+        // audio/video
+        p.on("stream", (stream) => {
+            const peerVideo = this.peerVideoRef.current
+            peerVideo.srcObject = stream;
+            peerVideo.play();
+        });
+
+        /*// chat
+        p.on("data", function(data) {
+          let chatBox = document.getElementById("messagesBox");
+          let node = document.createElement("li");
+          node.textContent = data.toString();
+          chatBox.appendChild(node);
+        });*/
+
+        if ( !this.props.initiator ) {
+            p.signal(this.props.peer.sdp);
+        }
+    }
+
+    initLocalMedia(i = true) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then(stream => {
                 let p = new SimplePeer({
-                    initiator: true,
+                    initiator: i && this.props.initiator,
                     stream: stream,
                     trickle: false
-                }); 
-                console.log("local");
-                console.log(stream);
-
-                p.on('signal', data => {
-                    this.props.setSdp(data);
                 });
 
                 this.setState({
-                    stream: stream,
-                    localPeer: p
+                    peer: p,
+                    stream: stream
                 });
 
-                /*const userVideo = this.userVideoRef.current
+                this.bindEvents(p);
+
+                /*this.setState({
+                    stream: stream,
+                    localPeer: p
+                });*/
+
+                const userVideo = this.userVideoRef.current
                 userVideo.srcObject = stream;
-                userVideo.play();*/
+                userVideo.play();
             })
             .catch(err => {
                 alert(err);
             });
     }
 
-    createRemotePeer() {
-        setTimeout(() => {
-            let p = new SimplePeer({
-                initiator: false,
-                trickle: false
-            }); 
-
-            p.on('error', err => {console.log('error', err)});
-    
-            p.on('stream', stream => {
-                console.log("remote");
-                console.log(stream);
-                const peerVideo = this.peerVideoRef.current
-                peerVideo.srcObject = stream;
-                peerVideo.onloadedmetadata = function(e) {
-                    peerVideo.play();
-                  };
-            });
-    
-            this.setState({
-                remotePeer: p
-            });
-    
-            p.signal(this.props.peer.sdp);
-        }, 10000);
+    initConnection = () => {
+         this.initLocalMedia();
     }
+
+    initConnection = () => {
+        if (this.state.peer == null) {
+          // eslint-disable-next-line
+          this.state.peer = new SimplePeer({
+            initiator: false,
+            trickle: false
+          });
+          this.bindEvents(this.state.peer);
+        }
+    
+        this.state.peer.signal(JSON.parse(document.getElementById("form").value));
+      }
 
     render() {
         return (
             <div className="videos">
-                <Row>
-                    <Col sm="6">
-                        <h2>Réception</h2>
-                        <video ref={this.peerVideoRef} width="100%" height="400px"></video>
-                    </Col>
-                    <Col sm="6">
-                        <h2>Envoi</h2>
-                        <video ref={this.userVideoRef} width="100%" height="400px"></video>
-                    </Col>
-                </Row>
+                <video ref={this.peerVideoRef} width="100%" className="peerVideo"></video>
+
+                <video ref={this.userVideoRef} className="userVideo"></video>
             </div>
         );
     }
