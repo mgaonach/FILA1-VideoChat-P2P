@@ -1,7 +1,7 @@
 import React, { createContext, Component } from 'react';
 import io from 'socket.io-client';
-//const SERVER_LOCATION = 'http://localhost:2019/';
-const SERVER_LOCATION = 'http://192.168.0.12:2019/';
+import config from '../../config.json';
+const SERVER_LOCATION = 'http://' + config['signal-channel'].host + ':' + config['signal-channel'].port + '/'
 
 export const SignalChannelContext = createContext({
     user: {
