@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Card, Row, Col } from 'react-bootstrap'
 
-import { withSignalChannel } from '../../context/SignalChannel/SignalChannelProvider'
+import { withSignalChannel } from '../../SignalChannelProvider'
 import { withRouter } from 'react-router-dom';
 
 //import VideoConference from '../../VideoConference'

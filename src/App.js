@@ -2,10 +2,10 @@ import React from 'react'
 import { Navbar, Container } from 'react-bootstrap'
 import { BrowserRouter, Link } from 'react-router-dom'
 
-import { withSignalChannel } from './context/SignalChannel/SignalChannelProvider'
+import { withSignalChannel } from './SignalChannelProvider'
 
 import Routes from './Routes'
-import SettingsModal from './components/SettingsModal'
+import SettingsModal from './SettingsModal'
 
 class App extends React.Component {
   constructor(props) {

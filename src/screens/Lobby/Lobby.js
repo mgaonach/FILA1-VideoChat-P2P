@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { withSignalChannel } from '../../context/SignalChannel/SignalChannelProvider';
+import { withSignalChannel } from '../../SignalChannelProvider';
 import { withRouter } from 'react-router-dom';
 
 import { Card, Row, Col, Button, Form } from 'react-bootstrap';

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import "webrtc-adapter";
-import { withSignalChannel } from '../../../context/SignalChannel/SignalChannelProvider';
+import { withSignalChannel } from '../../../SignalChannelProvider';
 import SimplePeer from "simple-peer";
 
 import './Videos.css';

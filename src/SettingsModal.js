@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Modal, Button, Form } from 'react-bootstrap'
 
-import { withSignalChannel } from '../context/SignalChannel/SignalChannelProvider'
+import { withSignalChannel } from './SignalChannelProvider'
 
 class SettingsModal extends Component {
     constructor(){

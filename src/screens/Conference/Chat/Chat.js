@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Card, Form, Button } from 'react-bootstrap';
 
-import { withSignalChannel } from '../../../context/SignalChannel/SignalChannelProvider';
+import { withSignalChannel } from '../../../SignalChannelProvider';
 
 import './Chat.css';
 
