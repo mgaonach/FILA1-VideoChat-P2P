@@ -10,6 +10,12 @@ class Chat extends Component {
         messageInput : ''
     }
 
+    constructor(){
+        super();
+
+        this.messagesView = React.createRef();
+    }
+
     componentDidMount(){
         this.props.setSdp({});
     }
@@ -55,8 +61,17 @@ class Chat extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        document.getElementById("message").value = this.state.messageInput
-        document.getElementById("sendMessage").click();
+        if ( this.state.messageInput.split(' ').join('') !== "" ) {
+            this.props.sendMessage(this.state.messageInput);
+
+            if ( this.interval != null ) {
+                clearInterval(this.interval);
+                this.interval = null;
+            }
+            this.interval = setInterval(() => {
+                this.messagesView.current.scrollTop = this.messagesView.current.scrollHeight;
+            }, 100);
+        }
 
         this.setState({
             messageInput: ''
@@ -67,7 +82,7 @@ class Chat extends Component {
         return (
             <div className="chat">
                 <Card.Header as="h4" className="chat-header effect6">{ this.renderPeerName() }</Card.Header>
-                <ul className="chat-messages">
+                <ul className="chat-messages" ref={ this.messagesView }>
                     { this.renderMessages() }
                     <br />
                     &nbsp;

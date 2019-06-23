@@ -14,11 +14,6 @@ export const SignalChannelContext = createContext({
     },
     room: "",
     connectionEstablished: false,
-    initiator: false,
-    receiverCallback : () => {},
-    setReceiverCallback : () => {},
-    sendOffer: () => { },
-    sendANswer: () => { },
     setSdp: () => { },
     joinRoom: () => { },
     leaveRoom: () => { },
@@ -40,56 +35,6 @@ class SignalChannelProvider extends Component {
         },
         room: "",
         connectionEstablished: false,
-        initiator: false,
-        receiverCallback : () => {},
-        setReceiverCallback : (callback) => {
-            this.setState({receiverCallback: callback});
-        },
-        sendOffer: (offer) => {
-            return new Promise((resolve, reject) => {
-                if (offer == null) {
-                    reject("Bad parameter");
-                }
-
-                this.socket.emit('send offer', offer, (response) => {
-                    if (response.error != null) {
-                        alert('no offer, sorry');
-                        reject();
-                    } else {
-                        this.setState(state => {
-                            return {
-                                user: Object.assign({}, state.user, {
-                                    sdp: offer
-                                })
-                            };
-                        });
-                        resolve();
-                    }
-                });
-            });
-        },
-        sendAnswer: (answer) => {
-            return new Promise((resolve, reject) => {
-                if (answer == null) {
-                    reject("Bad parameter");
-                }
-
-                this.socket.emit('send answer', answer, (response) => {
-                    if (response.error != null) {
-                        reject();
-                    } else {
-                        this.setState(state => {
-                            return {
-                                user: Object.assign({}, state.user, {
-                                    sdp: answer
-                                })
-                            };
-                        });
-                        resolve();
-                    }
-                });
-            });
-        },
         /**
          * Allows to set the local user's Session Description Protocol (SDP).
          * It will be sent to peers to make communication possible
