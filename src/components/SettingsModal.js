@@ -2,7 +2,6 @@ import React, { Component } from "react"
 import { Modal, Button, Form } from 'react-bootstrap'
 
 import { withSignalChannel } from '../context/SignalChannel/SignalChannelProvider'
-import { withNotification } from '../context/Notification/NotificationProvider'
 
 class SettingsModal extends Component {
     constructor(){
@@ -30,7 +29,6 @@ class SettingsModal extends Component {
         this.props.setUsername(this.state.username).then(() => {
             this.props.onHide();
         }).catch(() => {
-            this.props.pushNotification("Votre nom d'utilisateur ne peut être vide.", "danger");
         });
     }
 
@@ -66,5 +64,5 @@ class SettingsModal extends Component {
     }
 }
 
-export default withNotification(withSignalChannel(SettingsModal));
+export default withSignalChannel(SettingsModal);
 

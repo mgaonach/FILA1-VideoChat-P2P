@@ -1,9 +1,8 @@
 import React from 'react'
-import { Navbar, Container, Alert } from 'react-bootstrap'
+import { Navbar, Container } from 'react-bootstrap'
 import { BrowserRouter, Link } from 'react-router-dom'
 
 import { withSignalChannel } from './context/SignalChannel/SignalChannelProvider'
-import { withNotification } from './context/Notification/NotificationProvider'
 
 import Routes from './Routes'
 import SettingsModal from './components/SettingsModal'
@@ -34,18 +33,6 @@ class App extends React.Component {
     }
   }
 
-  renderNotification(){
-    const message = this.props.notificationMessage;
-    if ( message == null || message === '' ) {
-      return "";
-    }
-    return (
-    <Alert className="notification fade show" variant={this.props.notificationVariant}>
-      { message }
-    </Alert>
-    );
-  }
-
   render() {
 
     return (
@@ -72,11 +59,10 @@ class App extends React.Component {
             </Container>
         </div>  
 
-        { this.renderNotification() }
       </BrowserRouter>
     );
   }
 }
 
-export default withNotification(withSignalChannel(App));
+export default withSignalChannel(App);
 
